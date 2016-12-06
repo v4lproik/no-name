@@ -4,7 +4,6 @@ import (
 	"github.com/juju/loggo"
 	"github.com/jessevdk/go-flags"
 	"github.com/v4lproik/wias/module"
-	"os"
 	"github.com/v4lproik/wias/util"
 	"strconv"
 	"strings"
@@ -24,6 +23,8 @@ func init()  {
 	loggo.ConfigureLoggers("debug")
 }
 
+const STOP_AT_FIRST = true
+
 func banner() {
 	var banner = `
 	|----------------------------------------------------------|
@@ -36,6 +37,7 @@ func banner() {
 }
 
 func main() {
+
 	// var
 	opts := Options{}
 
@@ -78,12 +80,7 @@ func main() {
 
 func getIps(path string) (ips []string){
 	// get
-	file, err := os.Open(path)
-	if err != nil {
-		logger.Errorf(err.Error())
-		return nil
-	}
-	lines := util.ReadLines(file)
+	lines, _ := util.ReadLines(path)
 
 	// filter
 	for line := range lines {
@@ -96,12 +93,7 @@ func getIps(path string) (ips []string){
 }
 
 func getFavicons(filePath string) (map[string]string) {
-	fileFavicon, err := os.Open(filePath)
-	if err != nil {
-		logger.Errorf(err.Error())
-		return nil
-	}
-	linesFav := util.ReadLines(fileFavicon)
+	linesFav, _ := util.ReadLines(filePath)
 
 	favicons := make(map[string]string)
 	for line := range linesFav {
@@ -120,11 +112,14 @@ func getFavicons(filePath string) (map[string]string) {
 func initChains(ips []string) ([]module.Module) {
 	chains := make([]module.Module, len(ips))
 
+	// parse default password database
+	credentials := data.NewCredentials("conf/default-password-web-interface.txt", "conf/password.txt", "conf/login.txt")
+
 	// init chains
 	for key, _ := range ips  {
 		firstModule := module.NewScrapModule()
 		secondModule := module.NewFindFormModule(strconv.Itoa(key))
-		thirdModule := module.NewBruteforceModule()
+		thirdModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST)
 
 		firstModule.SetNextModule(secondModule)
 		secondModule.SetNextModule(thirdModule)

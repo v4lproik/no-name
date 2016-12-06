@@ -8,11 +8,14 @@ import (
 )
 
 type bruteforceModule struct {
+	credentials *data.Credentials
+
+	stopFirstFound bool
 	next Module
 }
 
-func NewBruteforceModule() *bruteforceModule{
-	return &bruteforceModule{}
+func NewBruteforceModule(credentials *data.Credentials, stopFirstFound bool) *bruteforceModule{
+	return &bruteforceModule{credentials, stopFirstFound, nil}
 }
 
 func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
@@ -22,14 +25,17 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 		wi.Form != nil &&
 		wi.Form.OtherArgWithValue != nil &&
 		wi.Form.UrlToSubmit != "" &&
-		wi.Form.SubmitArg != "" &&
 		wi.Form.PasswordArg != "" &&
 		wi.Form.UsernameArg != ""
 
 	if condition {
 		logger.Infof("Start bruteforcing")
 
-		//start bruteforcing
+		//search by favicon md5 hash
+		if wi.Form.FaviconMD5Hash != "" {
+
+		}
+
 		values := make(url.Values)
 		values.Set(wi.Form.UsernameArg, "test")
 		values.Set(wi.Form.PasswordArg, "test")
@@ -47,24 +53,35 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 
 		resWithBadCredentials = res.Text()
 
+		//start bruteforcing
+		found  := false
+		for _, usernameTry := range m.credentials.Logins {
+			for _, passwordTry := range m.credentials.Passwords {
+				// bruteforce ON
+				values.Set(wi.Form.UsernameArg, usernameTry)
+				values.Set(wi.Form.PasswordArg, passwordTry)
 
-		// bruteforce ON
-		usernameTry := "admin"
-		PasswordTry := "password"
-		values.Set(wi.Form.UsernameArg, usernameTry)
-		values.Set(wi.Form.PasswordArg, PasswordTry)
+				res, err = wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
+				resWithPotentialGoodCredentials := ""
+				if err != nil {
+					logger.Errorf("Error bruteforcing", err)
+				}
+				resWithPotentialGoodCredentials = res.Text()
 
-		res, err = wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
-		resWithPotentialGoodCredentials := ""
-		if err != nil {
-			logger.Errorf("Error bruteforcing", err)
-		}
-		resWithPotentialGoodCredentials = res.Text()
+				ratioDiff := util.GetDiffBetweenTwoPages(resWithBadCredentials, resWithPotentialGoodCredentials)
+				logger.Debugf("Ratio <" + usernameTry + "/" + passwordTry + ">" + strconv.FormatFloat(ratioDiff, 'f', 6, 64))
+				if ratioDiff < 0.92 {
+					logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
+					found = true;
+					if m.stopFirstFound {
+						break;
+					}
+				}
+			}
 
-		ratioDiff := util.GetDiffBetweenTwoPages(resWithBadCredentials, resWithPotentialGoodCredentials)
-		logger.Debugf("Ratio " + strconv.FormatFloat(ratioDiff, 'f', 6, 64))
-		if ratioDiff != 1.0 {
-			logger.Infof("Potential credentials: <" + usernameTry + "/" + PasswordTry + ">")
+			if found && m.stopFirstFound {
+				break
+			}
 		}
 	}
 

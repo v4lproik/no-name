@@ -8,8 +8,10 @@ type Form struct {
 	SubmitArg string
 	OtherArgWithValue map[string]string
 	MethodSubmitArg string
+
+	FaviconMD5Hash string
 }
 
 func NewForm() (f *Form) {
-	return &Form{"", "", "", "", "", make(map[string]string), ""}
+	return &Form{"", "", "", "", "", make(map[string]string), "", ""}
 }

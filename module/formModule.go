@@ -4,6 +4,7 @@ import (
 	"github.com/v4lproik/wias/data"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
+	"github.com/v4lproik/wias/util"
 )
 
 type formModule struct {
@@ -62,6 +63,10 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 				case strings.Contains(types, "submit"):
 					logger.Debugf("Submit input has been found with type <" + types + ">")
 					form.SubmitArg = types
+
+				case strings.Contains(types, "password"):
+					logger.Debugf("Password input has been found with type <" + types + ">")
+					form.PasswordArg = types
 				}
 			}
 
@@ -75,8 +80,14 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 				}
 			}
 
+			//compute favicon
+			util.IsFaviconInDocument(wi.Doc)
+
 			wi.Form = form
 		})
+
+
+
 	}
 
 	if flag && m.next != nil{
