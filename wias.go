@@ -50,7 +50,7 @@ func main() {
 	// parse cli arguments
 	_, err := parser.Parse()
 	if err != nil {
-		logger.Errorf(err.Error())
+		panic(err)
 	}
 
 	// parse favicons database
