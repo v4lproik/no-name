@@ -23,6 +23,7 @@ func IsFaviconInDocument(doc *goquery.Document) (string, error){
 	}
 
 	// find url to submit the form
+	urlFavicon := ""
 	doc.Find("link").Each(func(i int, s *goquery.Selection) {
 		rel, exists := s.Attr("rel")
 		if exists {
@@ -30,12 +31,12 @@ func IsFaviconInDocument(doc *goquery.Document) (string, error){
 				href, exists := s.Attr("href")
 				if exists{
 					loggerUtilHTML.Debugf("Favicon found at address " + href)
-					return href, nil
+					urlFavicon = string(href)
 				}
 			}
 		}
 	})
 
 
-	return "", nil
+	return urlFavicon, nil
 }
