@@ -5,17 +5,22 @@ import (
 	"net/url"
 	"github.com/v4lproik/wias/util"
 	"strconv"
+	"crypto/md5"
+	"encoding/hex"
+	"hash"
 )
 
 type bruteforceModule struct {
 	credentials *data.Credentials
+
+	hasher hash.Hash
 
 	stopFirstFound bool
 	next Module
 }
 
 func NewBruteforceModule(credentials *data.Credentials, stopFirstFound bool) *bruteforceModule{
-	return &bruteforceModule{credentials, stopFirstFound, nil}
+	return &bruteforceModule{credentials, md5.New(), stopFirstFound, nil}
 }
 
 func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
@@ -31,11 +36,6 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 	if condition {
 		logger.Infof("Start bruteforcing")
 
-		//search by favicon md5 hash
-		if wi.Form.FaviconMD5Hash != "" {
-
-		}
-
 		values := make(url.Values)
 		values.Set(wi.Form.UsernameArg, "test")
 		values.Set(wi.Form.PasswordArg, "test")
@@ -45,44 +45,57 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 		}
 
 		//get page with errors for comparison purpose
-		res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
 		resWithBadCredentials := ""
+		res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
 		if err != nil {
-			logger.Errorf("Error bruteforcing", err)
+			logger.Errorf("Url bruteforce can't be reached ", err.Error())
+		}else{
+			doc, err := wi.ClientWeb.GetDocument(res)
+			if err != nil {
+				logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
+			}
+			resWithBadCredentials = doc.Text()
 		}
 
-		resWithBadCredentials = res.Text()
 
 		//start bruteforcing
-		found  := false
-		for _, usernameTry := range m.credentials.Logins {
-			for _, passwordTry := range m.credentials.Passwords {
-				// bruteforce ON
-				values.Set(wi.Form.UsernameArg, usernameTry)
-				values.Set(wi.Form.PasswordArg, passwordTry)
+		if resWithBadCredentials != "" {
+			found  := false
+			for _, usernameTry := range m.credentials.Logins {
+				for _, passwordTry := range m.credentials.Passwords {
+					// bruteforce ON
+					values.Set(wi.Form.UsernameArg, usernameTry)
+					values.Set(wi.Form.PasswordArg, passwordTry)
 
-				res, err = wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
-				resWithPotentialGoodCredentials := ""
-				if err != nil {
-					logger.Errorf("Error bruteforcing", err)
-				}
-				resWithPotentialGoodCredentials = res.Text()
+					resWithPotentialGoodCredentials := ""
+					res, err = wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
+					if err != nil {
+						logger.Errorf("Url bruteforce can't be reached ", err.Error())
+					}else{
+						doc, err := wi.ClientWeb.GetDocument(res)
+						if err != nil {
+							logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
+						}
+						resWithPotentialGoodCredentials = doc.Text()
+					}
 
-				ratioDiff := util.GetDiffBetweenTwoPages(resWithBadCredentials, resWithPotentialGoodCredentials)
-				logger.Debugf("Ratio <" + usernameTry + "/" + passwordTry + ">" + strconv.FormatFloat(ratioDiff, 'f', 6, 64))
-				if ratioDiff < 0.92 {
-					logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
-					found = true;
-					if m.stopFirstFound {
-						break;
+					ratioDiff := util.GetDiffBetweenTwoPages(resWithBadCredentials, resWithPotentialGoodCredentials)
+					logger.Debugf("Ratio <" + usernameTry + "/" + passwordTry + ">" + strconv.FormatFloat(ratioDiff, 'f', 6, 64))
+					if ratioDiff < 0.92 {
+						logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
+						found = true;
+						if m.stopFirstFound {
+							break;
+						}
 					}
 				}
-			}
 
-			if found && m.stopFirstFound {
-				break
+				if found && m.stopFirstFound {
+					break
+				}
 			}
 		}
+
 	}
 
 	if flag && m.next != nil{
