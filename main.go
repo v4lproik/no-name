@@ -119,10 +119,12 @@ func initChains(ips []string) ([]module.Module) {
 	for key, _ := range ips  {
 		firstModule := module.NewScrapModule()
 		secondModule := module.NewFindFormModule(strconv.Itoa(key))
-		thirdModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST)
+		thirdModule := module.NewFaviconModule(credentials)
+		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST)
 
 		firstModule.SetNextModule(secondModule)
 		secondModule.SetNextModule(thirdModule)
+		thirdModule.SetNextModule(fourthModule)
 
 		chains[key] = firstModule
 	}

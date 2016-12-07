@@ -10,8 +10,9 @@ type Form struct {
 	MethodSubmitArg string
 
 	FaviconMD5Hash string
+	FaviconPath string
 }
 
 func NewForm() (f *Form) {
-	return &Form{"", "", "", "", "", make(map[string]string), "", ""}
+	return &Form{"", "", "", "", "", make(map[string]string), "", "", ""}
 }

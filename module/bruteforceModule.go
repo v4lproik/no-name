@@ -6,7 +6,6 @@ import (
 	"github.com/v4lproik/wias/util"
 	"strconv"
 	"crypto/md5"
-	"encoding/hex"
 	"hash"
 )
 

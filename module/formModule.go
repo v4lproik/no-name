@@ -4,7 +4,6 @@ import (
 	"github.com/v4lproik/wias/data"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
-	"github.com/v4lproik/wias/util"
 )
 
 type formModule struct {
@@ -79,9 +78,6 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 					logger.Debugf("Couple name=value has been found <" + name + "=" + value + ">")
 				}
 			}
-
-			//compute favicon
-			util.IsFaviconInDocument(wi.Doc)
 
 			wi.Form = form
 		})
