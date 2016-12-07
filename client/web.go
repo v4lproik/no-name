@@ -52,7 +52,7 @@ func (w *Web) GetDocument(res *http.Response) (*goquery.Document, error){
 	return goquery.NewDocumentFromResponse(res)
 }
 
-func (w *Web) ScrapWithParameter(path string, method string, values url.Values) (*goquery.Document, error){
+func (w *Web) ScrapWithParameter(path string, method string, values url.Values) (*http.Response, error){
 	scheme := w.Url.Scheme
 	host := w.Url.Path
 
@@ -66,7 +66,7 @@ func (w *Web) ScrapWithParameter(path string, method string, values url.Values) 
 		//output, err := httputil.DumpResponse(res, true)
 		//loggerWeb.Debugf(string(output))
 
-		return goquery.NewDocumentFromResponse(res)
+		return res, nil
 	}else {
 		if method == "GET" || method == "get" {
 
@@ -78,11 +78,27 @@ func (w *Web) ScrapWithParameter(path string, method string, values url.Values) 
 			if err != nil {
 				return nil, err
 			}
-			return goquery.NewDocumentFromResponse(res)
+			return res, nil
 		}
 	}
 
 	return nil, nil
+}
+
+func (w *Web) CraftUrl(path string) (string){
+	url, err := url.Parse(path)
+	if err != nil {
+		loggerWeb.Errorf(err.Error())
+	}
+
+	if url.Host == "" {
+		scheme := w.Url.Scheme
+		host := w.Url.Path
+
+		return scheme + "://" + host + "/" + path
+	}
+
+	return path
 }
 
 // setter for client
