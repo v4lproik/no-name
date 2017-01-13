@@ -1,4 +1,4 @@
-# no-name
+# no-name [![CircleCI](https://circleci.com/gh/Yinkozi/no-name.svg?style=svg&circle-token=a18ffbc369b8ddcf8de823bc2a1eeb628509fcb7)](https://circleci.com/gh/Yinkozi/no-name)
 
 ## Environment Installation
 1. Visit https://golang.org/doc/install

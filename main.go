@@ -24,6 +24,10 @@ func init()  {
 }
 
 const STOP_AT_FIRST = true
+const LOGIN = "conf/login.txt"
+const PASSWORD = "conf/password.txt"
+const DEFAULT_PASSWORD = "conf/default-password-web-interface.txt"
+
 
 func banner() {
 	var banner = `
@@ -113,7 +117,7 @@ func initChains(ips []string) ([]module.Module) {
 	chains := make([]module.Module, len(ips))
 
 	// parse default password database
-	credentials := data.NewCredentials("conf/default-password-web-interface.txt", "conf/password.txt", "conf/login.txt")
+	credentials := data.NewCredentials(DEFAULT_PASSWORD, PASSWORD, LOGIN)
 
 	// init chains
 	for key, _ := range ips  {

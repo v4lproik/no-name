@@ -13,5 +13,5 @@ type WebInterface struct {
 }
 
 func NewWebInterface(webClient *client.Web) *WebInterface{
-	return &WebInterface{webClient, nil, nil}
+	return &WebInterface{webClient, nil, NewForm()}
 }

@@ -82,8 +82,6 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 			wi.Form = form
 		})
 
-
-
 	}
 
 	if flag && m.next != nil{

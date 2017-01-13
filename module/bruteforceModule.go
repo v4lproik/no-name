@@ -33,7 +33,7 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 		wi.Form.UsernameArg != ""
 
 	if condition {
-		logger.Infof("Start bruteforcing")
+		logger.Debugf("Start bruteforcing")
 
 		values := make(url.Values)
 		values.Set(wi.Form.UsernameArg, "test")
