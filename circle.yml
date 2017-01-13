@@ -5,16 +5,22 @@ machine:
 
   services:
     - docker
+    - docker-compose
 
 dependencies:
   cache_directories:
     - "~/.glide"
+
+  pre:
+      - sudo -H pip install docker-compose==1.8.0
 
   override:
     #install glide
     - sudo add-apt-repository ppa:masterminds/glide -y
     - sudo apt-get update
     - sudo apt-get install glide -y
+    - sudo /etc/init.d/mysql stop
+    - docker-compose up -d
 
 test:
   pre:
