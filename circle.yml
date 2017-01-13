@@ -5,7 +5,6 @@ machine:
 
   services:
     - docker
-    - docker-compose
 
 dependencies:
   cache_directories:
