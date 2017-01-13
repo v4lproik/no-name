@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"net/http/cookiejar"
+	"strings"
 )
 
 type Web struct {
@@ -20,14 +21,14 @@ func NewWeb(ip string) (*Web){
 	cookieJar, _ := cookiejar.New(nil)
 	client.Jar = cookieJar
 
+	if !strings.HasPrefix(ip, "http://") || !strings.HasPrefix(ip, "https://") {
+		loggerWeb.Warningf("No scheme for url " + ip + ". Setting scheme to http://" + ip)
+		ip = "http://" + ip
+	}
+
 	url, err := url.Parse(ip)
 	if err != nil {
 		panic(err)
-	}
-
-	if url.Scheme == "" {
-		loggerWeb.Warningf("No scheme for url " + ip + ". Setting scheme to http://" + ip)
-		url.Scheme = "http"
 	}
 
 	return &Web{client, url}
@@ -35,9 +36,10 @@ func NewWeb(ip string) (*Web){
 
 func (w *Web) Scrap() (*http.Response, error){
 	scheme := w.Url.Scheme
-	host := w.Url.Path
+	host := w.Url.Host
+	path := w.Url.Path
 
-	res, err := w.client.Get(scheme + "://" + host)
+	res, err := w.client.Get(scheme + "://" + host + path)
 	if err != nil {
 		return nil, err
 	}
@@ -54,16 +56,23 @@ func (w *Web) GetDocument(res *http.Response) (*goquery.Document, error){
 
 func (w *Web) ScrapWithParameter(path string, method string, values url.Values) (*http.Response, error){
 	scheme := w.Url.Scheme
-	host := w.Url.Path
+	host := w.Url.Host
 
 	if method == "POST" || method == "post"{
-		urlToRequest := scheme + "://" + host + "/" + path
+
+		urlToRequest := ""
+		if strings.HasPrefix(path, "/") {
+			urlToRequest = scheme + "://" + host + path
+		}else{
+			urlToRequest = scheme + "://" + host + "/" + path
+		}
+
 		res, err := w.client.PostForm(urlToRequest, values)
 		if err != nil {
 			return nil, err
 		}
-
-		//output, err := httputil.DumpResponse(res, true)
+		//print(res.Request)
+		//output, err := httputil.DumpRequest(res.Request, true)
 		//loggerWeb.Debugf(string(output))
 
 		return res, nil
@@ -71,7 +80,12 @@ func (w *Web) ScrapWithParameter(path string, method string, values url.Values) 
 		if method == "GET" || method == "get" {
 
 			// craft url
-			urlToRequest := scheme + "://" + host + "/" + path + "?" + values.Encode()
+			urlToRequest := ""
+			if strings.HasPrefix("/", path) {
+				urlToRequest = scheme + "://" + host + path + "?" + values.Encode()
+			}else{
+				urlToRequest = scheme + "://" + host + "/" + path + "?" + values.Encode()
+			}
 
 			// submit form
 			res, err := w.client.Get(urlToRequest)

@@ -75,6 +75,7 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 						if err != nil {
 							logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
 						}
+
 						resWithPotentialGoodCredentials = doc.Text()
 					}
 
