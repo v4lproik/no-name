@@ -57,12 +57,17 @@ func main() {
 		panic(err)
 	}
 
+	setUp(opts.Favicons, opts.Ips)
+}
+
+func setUp(optsFavicon string, optsIps string) {
+
 	// parse favicons database
-	favicons := getFavicons(opts.Favicons)
+	favicons := getFavicons(optsFavicon)
 	showFavicons(favicons)
 
 	// parse ips database
-	ips := getIps(opts.Ips)
+	ips := getIps(optsIps)
 	showIps(ips)
 
 	// create the chains findform -> findid -> bruteforce
