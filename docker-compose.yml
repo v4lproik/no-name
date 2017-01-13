@@ -2,16 +2,24 @@ infoslack:
   image: "infoslack/dvwa"
   ports:
     - "80:80"
-    - "3306:3306"
   environment:
     - MYSQL_PASS=p@ssw0rd
 
 citizenstig:
   image: "citizenstig/nowasp"
   ports:
-    - "8081:8081"
+    - "8081:80"
+  environment:
+    - MYSQL_PASS=p@ssw0rd
 
 webgoat:
   image: "webgoat/webgoat-container"
   ports:
-    - "8080:8082"
+    - "8080:8080"
+
+mysql:
+  image: "mysql/mysql-server"
+  ports:
+    - "3306:3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=p@ssw0rd
