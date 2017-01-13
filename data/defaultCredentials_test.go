@@ -4,14 +4,17 @@ import (
 	"testing"
 )
 
+
 func TestNewCredentials(t *testing.T) {
 	t.Log("Call NewCredentials with existing file")
 
 	//given
-	path := "../conf/default-password-web-interface_test.txt"
+	const LOGIN = "../conf/login_test.txt"
+	const PASSWORD = "../conf/password_test.txt"
+	const DEFAULT_PASSWORD = "../conf/default-password-web-interface_test.txt"
 
 	// when
-	credentials := NewCredentials(path)
+	credentials := NewCredentials(DEFAULT_PASSWORD, PASSWORD, LOGIN)
 
 	// then
 	if credentials.Webinterfaces != nil && len(credentials.Webinterfaces) != 2 &&
