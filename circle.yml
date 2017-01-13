@@ -1,7 +1,7 @@
 machine:
   environment:
     IMPORT_PATH: "/home/ubuntu/.go_workspace/src/github.com/yinkozi/"
-    APP_PATH: "$IMPORT_PATH/myproject"
+    APP_PATH: "$IMPORT_PATH/no-name"
 
   services:
     - docker
