@@ -1,4 +1,4 @@
-package: github.com/v4lproik/wias
+package: github.com/v4lproik/no-name
 import:
 - package: github.com/juju/loggo
 - package: github.com/jessevdk/go-flags
