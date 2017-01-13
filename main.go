@@ -3,12 +3,12 @@ package main
 import (
 	"github.com/juju/loggo"
 	"github.com/jessevdk/go-flags"
-	"github.com/v4lproik/no-name/module"
-	"github.com/v4lproik/no-name/util"
+	"github.com/yinkozi/no-name/module"
+	"github.com/yinkozi/no-name/util"
 	"strconv"
 	"strings"
-	"github.com/v4lproik/no-name/client"
-	"github.com/v4lproik/no-name/data"
+	"github.com/yinkozi/no-name/client"
+	"github.com/yinkozi/no-name/data"
 )
 
 var logger = loggo.GetLogger("main")

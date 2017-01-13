@@ -1,9 +1,9 @@
 package module
 
 import (
-	"github.com/v4lproik/no-name/data"
+	"github.com/yinkozi/no-name/data"
 	"net/url"
-	"github.com/v4lproik/no-name/util"
+	"github.com/yinkozi/no-name/util"
 	"crypto/md5"
 	"encoding/hex"
 	"hash"

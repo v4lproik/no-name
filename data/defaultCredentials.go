@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/juju/loggo"
 	"io/ioutil"
-	"github.com/v4lproik/no-name/util"
+	"github.com/yinkozi/no-name/util"
 )
 
 var logger = loggo.GetLogger("credentials")

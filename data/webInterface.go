@@ -2,7 +2,7 @@ package data
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"github.com/v4lproik/no-name/client"
+	"github.com/yinkozi/no-name/client"
 )
 
 type WebInterface struct {

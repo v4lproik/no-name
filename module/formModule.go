@@ -1,7 +1,7 @@
 package module
 
 import (
-	"github.com/v4lproik/no-name/data"
+	"github.com/yinkozi/no-name/data"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
 )
