@@ -1,9 +1,9 @@
 package module
 
 import (
-	"github.com/v4lproik/wias/data"
+	"github.com/v4lproik/no-name/data"
 	"net/url"
-	"github.com/v4lproik/wias/util"
+	"github.com/v4lproik/no-name/util"
 	"strconv"
 	"crypto/md5"
 	"hash"
