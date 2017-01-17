@@ -35,7 +35,7 @@ func NewReportModuleWithSource(rootDir string, format Format, io io.Writer) *rep
 	case HTML:
 		formatChoosen = "html"
 	case GREPABLE:
-		formatChoosen = "grep"
+		formatChoosen = "txt"
 	}
 
 	return &reportModule{io, formatChoosen, rootDir, nil}
@@ -48,7 +48,7 @@ func NewReportModule(templateDir string, format Format) *reportModule{
 	case HTML:
 		formatChoosen = "html"
 	case GREPABLE:
-		formatChoosen = "grep"
+		formatChoosen = "txt"
 	}
 
 	var buf bytes.Buffer
@@ -58,27 +58,25 @@ func NewReportModule(templateDir string, format Format) *reportModule{
 
 func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
 
-	if m.format == "html" {
-
-		myVars := map[string]string {
-			"Title": "Report - " + wi.Form.UrlToSubmit,
-			"Content": "Potential username/password find are: " + wi.Form.PotentialUsername + "/" + wi.Form.PotentialPassword,
-		}
-
-		var templates = template.Must(template.ParseFiles(filepath.Join(m.templateDir, "./template/report.html")))
-		err := templates.ExecuteTemplate(m.io, "report.html", myVars)
-		if err != nil {
-			logger.Criticalf("Cannot Get View ", err)
-		}
-
-		filename := filepath.Join(m.templateDir, REPORT_FOLDER) + "/" + "report-" + time.Now().String() + "_" + uuid.New().String() + "." + m.format
-		f, err := os.Create(filename)
-		if err != nil {
-			logger.Criticalf("Cannot Create File for Report ", err)
-		}
-
-		fmt.Fprintf(f, "%s", m.io)
+	myVars := map[string]string {
+		"Title": "Report - " + wi.Form.UrlToSubmit,
+		"Content": "Potential username/password find are: " + wi.Form.PotentialUsername + "/" + wi.Form.PotentialPassword,
 	}
+
+	var templates = template.Must(template.ParseFiles(filepath.Join(m.templateDir, "./template/report" + "." + m.format)))
+	err := templates.ExecuteTemplate(m.io, "report" + "." + m.format, myVars)
+	if err != nil {
+		logger.Criticalf("Cannot Get View ", err)
+	}
+
+	filename := filepath.Join(m.templateDir, REPORT_FOLDER) + "/" + "report-" + time.Now().String() + "_" + uuid.New().String() + "." + m.format
+	f, err := os.Create(filename)
+	if err != nil {
+		logger.Criticalf("Cannot Create File for Report ", err)
+	}
+
+	fmt.Fprintf(f, "%s", m.io)
+
 }
 
 func (m *reportModule) SetNextModule(next Module){
