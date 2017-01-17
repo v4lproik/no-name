@@ -9,6 +9,7 @@ machine:
 dependencies:
   cache_directories:
     - "~/.glide"
+    - "~/docker"
 
   pre:
     - sudo -H pip install docker-compose==1.8.0
@@ -20,12 +21,16 @@ dependencies:
     - "curl --retry 10 --retry-delay 5 'http://localhost:8081/set-up-database.php'"
 
   override:
+    #load docker cache
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     #install glide
     - sudo add-apt-repository ppa:masterminds/glide -y
     - sudo apt-get update
     - sudo apt-get install glide -y
+    #remove dependencies
     - sudo /etc/init.d/mysql stop
     - sudo apt-get remove --purge mysql mysql-server
+    #start containers
     - docker-compose up -d; sleep 10
 
 test:
