@@ -9,9 +9,12 @@ import (
 	"strings"
 	"github.com/yinkozi/no-name/client"
 	"github.com/yinkozi/no-name/data"
+	"os"
 )
 
 var logger = loggo.GetLogger("main")
+var rootDir = ""
+
 
 type Options struct{
 	Ips string `short:"f" long:"filename" description:"File path containing the IPs to scan" required:"true"`
@@ -22,6 +25,9 @@ type Options struct{
 
 func init()  {
 	loggo.ConfigureLoggers("debug")
+
+	cwd, _ := os.Getwd()
+	rootDir = cwd[:strings.LastIndex(cwd, "/")]
 }
 
 const STOP_AT_FIRST = true
@@ -140,7 +146,7 @@ func initChains(ips []string) ([]module.Module) {
 		secondModule := module.NewFindFormModule(strconv.Itoa(key))
 		thirdModule := module.NewFaviconModule(credentials)
 		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST)
-		fifthModule := module.NewReportModule(HTML)
+		fifthModule := module.NewReportModule(rootDir, HTML)
 
 		firstModule.SetNextModule(secondModule)
 		secondModule.SetNextModule(thirdModule)
