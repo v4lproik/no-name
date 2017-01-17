@@ -21,7 +21,7 @@ func NewWeb(ip string) (*Web){
 	cookieJar, _ := cookiejar.New(nil)
 	client.Jar = cookieJar
 
-	if !strings.HasPrefix(ip, "http://") || !strings.HasPrefix(ip, "https://") {
+	if !strings.HasPrefix(ip, "http://") && !strings.HasPrefix(ip, "https://") {
 		loggerWeb.Warningf("No scheme for url " + ip + ". Setting scheme to http://" + ip)
 		ip = "http://" + ip
 	}

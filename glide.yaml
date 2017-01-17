@@ -4,3 +4,5 @@ import:
 - package: github.com/jessevdk/go-flags
 - package: github.com/PuerkitoBio/goquery
 - package: github.com/pmezard/go-difflib/difflib
+- package: github.com/google/uuid
+- package: github.com/kardianos/osext

@@ -17,6 +17,7 @@ type Options struct{
 	Ips string `short:"f" long:"filename" description:"File path containing the IPs to scan" required:"true"`
 	Favicons string `short:"d" long:"database" description:"File path containing the md5 computation of the web interface's favicon" required:"true"`
 	Modules string `short:"m" long:"module" description:"Modules you want to see running against the list of Ips you provided " required:"true"`
+	Output string `short:"o" long:"output" description:"Format of the report" required:"true"`
 }
 
 func init()  {
@@ -28,6 +29,8 @@ const LOGIN = "conf/login.txt"
 const PASSWORD = "conf/password.txt"
 const DEFAULT_PASSWORD = "conf/default-password-web-interface.txt"
 
+const HTML = 0
+const GREPABLE = 1
 
 func banner() {
 	var banner = `
@@ -41,7 +44,6 @@ func banner() {
 }
 
 func main() {
-
 	// var
 	opts := Options{}
 
@@ -57,10 +59,15 @@ func main() {
 		panic(err)
 	}
 
-	setUp(opts.Favicons, opts.Ips)
+	// parse optsOutput
+	if opts.Output != "html" && opts.Output != "grep" {
+		panic(parser.Usage)
+	}
+
+	setUp(opts.Favicons, opts.Ips, opts.Output)
 }
 
-func setUp(optsFavicon string, optsIps string) {
+func setUp(optsFavicon string, optsIps string, optsOutput string) {
 
 	// parse favicons database
 	favicons := getFavicons(optsFavicon)
@@ -69,6 +76,9 @@ func setUp(optsFavicon string, optsIps string) {
 	// parse ips database
 	ips := getIps(optsIps)
 	showIps(ips)
+
+	// set default output
+	//OUTPUT = 0
 
 	// create the chains findform -> findid -> bruteforce
 	channels := initChannels(len(ips))
@@ -130,10 +140,12 @@ func initChains(ips []string) ([]module.Module) {
 		secondModule := module.NewFindFormModule(strconv.Itoa(key))
 		thirdModule := module.NewFaviconModule(credentials)
 		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST)
+		fifthModule := module.NewReportModule(HTML)
 
 		firstModule.SetNextModule(secondModule)
 		secondModule.SetNextModule(thirdModule)
 		thirdModule.SetNextModule(fourthModule)
+		fourthModule.SetNextModule(fifthModule)
 
 		chains[key] = firstModule
 	}

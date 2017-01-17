@@ -83,6 +83,8 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 					logger.Debugf("Ratio <" + usernameTry + "/" + passwordTry + ">" + strconv.FormatFloat(ratioDiff, 'f', 6, 64))
 					if ratioDiff < 0.92 {
 						logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
+						wi.Form.PotentialUsername = usernameTry
+						wi.Form.PotentialPassword = passwordTry
 						found = true;
 						if m.stopFirstFound {
 							break;
