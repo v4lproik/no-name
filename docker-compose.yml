@@ -13,7 +13,7 @@ citizenstig:
     - MYSQL_PASS=p@ssw0rd
 
 webgoat:
-  image: "webgoat/webgoat-container"
+  image: "webgoat/webgoat-8.0"
   ports:
     - "8080:8080"
 
