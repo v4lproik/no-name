@@ -26,7 +26,7 @@ const (
 	GREPABLE
 )
 
-const REPORT_FOLDER = "./public/report"
+const REPORT_FOLDER = "./report"
 
 func NewReportModuleWithSource(rootDir string, format Format, io io.Writer) *reportModule{
 
@@ -65,7 +65,7 @@ func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
 			"Content": "Potential username/password find are: " + wi.Form.PotentialUsername + "/" + wi.Form.PotentialPassword,
 		}
 
-		var templates = template.Must(template.ParseFiles(filepath.Join(m.templateDir, "./public/template/report.html")))
+		var templates = template.Must(template.ParseFiles(filepath.Join(m.templateDir, "./template/report.html")))
 		err := templates.ExecuteTemplate(m.io, "report.html", myVars)
 		if err != nil {
 			logger.Criticalf("Cannot Get View ", err)
