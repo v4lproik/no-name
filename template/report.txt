@@ -1,1 +1,1 @@
-{{.Title}}/{{.Content}}
+{{.Domain}}/{{.PotentialUsername}}/{{.PotentialPassword}}

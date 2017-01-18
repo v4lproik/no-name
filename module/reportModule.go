@@ -10,7 +10,6 @@ import (
 	"time"
 	"github.com/google/uuid"
 	"path/filepath"
-	"encoding/json"
 )
 
 type reportModule struct {
@@ -101,11 +100,9 @@ func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
 	if err != nil {
 		logger.Criticalf("Cannot Create File for Report ", err)
 	}else{
+		fmt.Fprintf(f, "%s", m.io)
 		logger.Infof("Report has been created at " + filename)
 	}
-
-	fmt.Fprintf(f, "%s", m.io)
-
 }
 
 func (m *reportModule) SetNextModule(next Module){
