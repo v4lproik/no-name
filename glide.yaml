@@ -1,4 +1,4 @@
-package: github.com/v4lproik/no-name
+package: github.com/yinkozi/no-name
 import:
 - package: github.com/juju/loggo
 - package: github.com/jessevdk/go-flags
@@ -6,3 +6,4 @@ import:
 - package: github.com/pmezard/go-difflib/difflib
 - package: github.com/google/uuid
 - package: github.com/kardianos/osext
+- package: github.com/yinkozi/no-name-domain
