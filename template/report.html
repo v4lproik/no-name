@@ -1,10 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{.Title}}</title>
+    <title>Report for {{.Domain}}</title>
 </head>
 <body>
-<h1>{{.Title}}</h1>
-{{.Content}}
+<h1>{{.Domain}}</h1>
+<h2>Form information</h2>
+<p>
+Form url : {{.UrlForm}} <br/>
+Url to submit the form : {{.UrlToSubmit}}<br/>
+Method field : {{.MethodSubmitArg}}<br/>
+Login field : {{.UsernameArg}}<br/>
+Password field : {{.PasswordArg}}<br/>
+Submit field : {{.SubmitArg}}<br/>
+Other fields : {{.OtherArgWithValue}}<br/>
+</p>
+
+<h2>Favicon information</h2>
+<p>
+Path : {{.FaviconPath}}<br/>
+MD5 Hash : {{.FaviconMD5Hash}}<br/>
+</p>
+
+<h2>Bruteforce information</h2>
+<p>
+Potential Username : {{.PotentialUsername}}<br/>
+Potential Password : {{.PotentialPassword}}<br/>
+</p>
+
 </body>
 </html>

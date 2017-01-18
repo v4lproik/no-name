@@ -19,7 +19,7 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 
 	if wi.Doc != nil {
 
-		form := data.NewForm()
+		form := wi.Form
 
 		// find url to submit the form
 		wi.Doc.Find("form").Each(func(i int, s *goquery.Selection) {

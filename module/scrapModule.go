@@ -30,6 +30,7 @@ func (m *scrapModule) Request(flag bool, wi *data.WebInterface) {
 	}
 
 	wi.Doc = doc
+	wi.Form.Domain = wi.ClientWeb.Url.Host
 
 	if flag && m.next != nil{
 		m.next.Request(flag, wi)

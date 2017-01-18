@@ -51,7 +51,8 @@ func (m *faviconModule) Request(flag bool, wi *data.WebInterface) {
 			}
 
 			m.hasher.Write([]byte(fav.Text()))
-			logger.Infof("MD5 Favicon is : " + hex.EncodeToString(m.hasher.Sum(nil)))
+			wi.Form.FaviconMD5Hash = hex.EncodeToString(m.hasher.Sum(nil))
+			logger.Infof("MD5 Favicon is : " + wi.Form.FaviconMD5Hash)
 		}
 
 		if flag && m.next != nil{

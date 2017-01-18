@@ -1,6 +1,8 @@
 package data
 
 type Form struct {
+	Domain string
+
 	UrlForm string
 	UrlToSubmit string
 	UsernameArg string
@@ -17,5 +19,5 @@ type Form struct {
 }
 
 func NewForm() (f *Form) {
-	return &Form{"", "", "", "", "", make(map[string]string), "", "", "", "", ""}
+	return &Form{"", "", "", "", "", "", make(map[string]string), "", "", "", "", ""}
 }

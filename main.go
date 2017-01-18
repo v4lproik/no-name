@@ -26,8 +26,7 @@ type Options struct{
 func init()  {
 	loggo.ConfigureLoggers("debug")
 
-	cwd, _ := os.Getwd()
-	rootDir = cwd[:strings.LastIndex(cwd, "/")]
+	rootDir, _ = os.Getwd()
 }
 
 const STOP_AT_FIRST = true
