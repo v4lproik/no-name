@@ -4,11 +4,13 @@
 ## Environment Installation
 1. Visit https://golang.org/doc/install
 2. Install glide (MAC Osx : brew install glide)
+3. Configure your ssh key so your able to pull the private repository of the dependencies manager (ssh-add <your_ssh_github_key>)
 
 ## Compile
 ```
 git clone https://github.com/Yinkozi/no-name
 cd no-name
+glide install
 go build main.go
 ```
 
