@@ -70,10 +70,30 @@ func main() {
 		panic(parser.Usage)
 	}
 
-	setUp(opts.Favicons, opts.Ips, opts.Output)
+	// setting up the different objects
+	ips, channels, chains := setUp(opts.Favicons, opts.Ips, opts.Output)
+
+	// launch the chains
+	launchChains(ips, channels, chains)
+
+	// wait for all the chains to be finished
+	waitForResponse(channels)
 }
 
-func setUp(optsFavicon string, optsIps string, optsOutput string) {
+func launchChains(ips []string, channels []chan string, chains []module.Module) {
+	//launch all the first module of all the chains in //
+	for idx, chain := range chains {
+		channel := channels[idx]
+		go func(channel chan string, idx int, chain module.Module) {
+			webInterface := data.NewWebInterface(client.NewWeb(ips[idx]))
+
+			chain.Request(true, webInterface)
+			channel <- "chain " + strconv.Itoa(idx) + " has finished with report " + webInterface.ReportPath
+		}(channel, idx, chain)
+	}
+}
+
+func setUp(optsFavicon string, optsIps string, optsOutput string) ([]string, []chan string, []module.Module) {
 
 	// parse favicons database
 	favicons := getFavicons(optsFavicon)
@@ -90,19 +110,7 @@ func setUp(optsFavicon string, optsIps string, optsOutput string) {
 	channels := initChannels(len(ips))
 	chains := initChains(ips)
 
-	//launch all the first module of all the chains in //
-	for idx, chain := range chains {
-		channel := channels[idx]
-		go func(channel chan string, idx int, chain module.Module) {
-			webInterface := data.NewWebInterface(client.NewWeb(ips[idx]))
-
-			chain.Request(true, webInterface)
-			channel <- "chain " + strconv.Itoa(idx) + " has finished with report " + webInterface.ReportPath
-		}(channel, idx, chain)
-	}
-
-	// wait for all the chains to be finished
-	waitForResponse(channels)
+	return ips, channels, chains
 }
 
 func getIps(path string) (ips []string){
@@ -164,13 +172,17 @@ func initChains(ips []string) ([]module.Module) {
 	return chains
 }
 
-func waitForResponse(channels []chan string) {
+func waitForResponse(channels []chan string) ([]string) {
+	reports := make([]string, len(channels))
 	for i := 0; i <= len(channels)-1; i++ {
 		select {
 		case msg := <-channels[i]:
-			logger.Infof(msg)
+			logger.Debugf(msg)
+			reports[i] = msg
 		}
 	}
+
+	return reports
 }
 
 func initChannels(nb int) ([]chan string){
