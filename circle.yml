@@ -1,6 +1,6 @@
 machine:
   environment:
-    IMPORT_PATH: "/home/ubuntu/.go_workspace/src/github.com/yinkozi/"
+    IMPORT_PATH: "/home/ubuntu/.go_workspace/src/github.com/v4lproik/"
     APP_PATH: "$IMPORT_PATH/no-name"
 
   services:

@@ -2,14 +2,14 @@ package module
 
 import (
 	"testing"
-	"github.com/yinkozi/no-name/data"
+	"github.com/v4lproik/no-name/data"
 	"bytes"
 	"strings"
 	"os"
 )
 
 func TestNewHtmlReport(t *testing.T) {
-	t.Log("Call sReportModule with existing data and html output should generate report")
+	t.Log("Call ReportModule with existing data and html output should generate report")
 
 	//given
 	wi := data.NewWebInterface(nil)

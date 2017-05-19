@@ -1,7 +1,7 @@
 package module
 
 import (
-	"github.com/yinkozi/no-name/data"
+	"github.com/v4lproik/no-name/data"
 	"html/template"
 	"io"
 	"bytes"

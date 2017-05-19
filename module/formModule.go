@@ -1,18 +1,21 @@
 package module
 
 import (
-	"github.com/yinkozi/no-name/data"
+	"github.com/v4lproik/no-name/data"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
+	"github.com/v4lproik/no-name/util"
 )
 
 type formModule struct {
-	next Module
 	name string
+	htmlTagsNames *data.HtmlTagsNames
+
+	next Module
 }
 
-func NewFindFormModule(name string) *formModule {
-	return &formModule{nil, name}
+func NewFindFormModule(name string, htmlTagsNames *data.HtmlTagsNames) *formModule {
+	return &formModule{name, htmlTagsNames, nil}
 }
 
 func (m *formModule) Request(flag bool, wi *data.WebInterface) {
@@ -45,10 +48,10 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 			if exists {
 				//try to find if the input is a username or a password field
 				switch {
-				case strings.Contains(names, "username"):
+				case util.Contains(m.htmlTagsNames.UsernameNames, names):
 					logger.Debugf("Username input has been found with name <" + names + ">")
 					form.UsernameArg = names
-				case strings.Contains(names, "password"):
+				case util.Contains(m.htmlTagsNames.PasswordNames, names):
 					logger.Debugf("Password has been found with name <" + names + ">")
 					form.PasswordArg = names
 				}

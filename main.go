@@ -3,12 +3,12 @@ package main
 import (
 	"github.com/juju/loggo"
 	"github.com/jessevdk/go-flags"
-	"github.com/yinkozi/no-name/module"
-	"github.com/yinkozi/no-name/util"
+	"github.com/v4lproik/no-name/module"
+	"github.com/v4lproik/no-name/util"
 	"strconv"
 	"strings"
-	"github.com/yinkozi/no-name/client"
-	"github.com/yinkozi/no-name/data"
+	"github.com/v4lproik/no-name/client"
+	"github.com/v4lproik/no-name/data"
 	"os"
 )
 
@@ -33,6 +33,7 @@ const STOP_AT_FIRST = true
 const LOGIN = "conf/login.txt"
 const PASSWORD = "conf/password.txt"
 const DEFAULT_PASSWORD = "conf/default-password-web-interface.txt"
+const HTML_TAGS_NAMES = "conf/html-detection-tags.txt"
 
 const HTML = 0
 const GREPABLE = 1
@@ -78,7 +79,7 @@ func setUp(optsFavicon string, optsIps string, optsOutput string) {
 	favicons := getFavicons(optsFavicon)
 	showFavicons(favicons)
 
-	// parse ips database
+	// parse ips to scan
 	ips := getIps(optsIps)
 	showIps(ips)
 
@@ -139,10 +140,13 @@ func initChains(ips []string) ([]module.Module) {
 	// parse default password database
 	credentials := data.NewCredentials(DEFAULT_PASSWORD, PASSWORD, LOGIN)
 
+	//parse html tags' names
+	htmlTagsNames := data.NewHtmlTagsNames(HTML_TAGS_NAMES)
+
 	// init chains
 	for key, _ := range ips  {
 		firstModule := module.NewScrapModule()
-		secondModule := module.NewFindFormModule(strconv.Itoa(key))
+		secondModule := module.NewFindFormModule(strconv.Itoa(key), htmlTagsNames)
 		thirdModule := module.NewFaviconModule(credentials)
 		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST)
 		fifthModule := module.NewReportModule(rootDir, HTML)

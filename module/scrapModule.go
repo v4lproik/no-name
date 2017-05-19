@@ -2,7 +2,7 @@ package module
 
 import (
 	"github.com/juju/loggo"
-	"github.com/yinkozi/no-name/data"
+	"github.com/v4lproik/no-name/data"
 )
 
 var logger = loggo.GetLogger("scrapModule")

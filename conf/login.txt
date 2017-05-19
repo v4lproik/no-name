@@ -1,5 +1,6 @@
 admin
 foo
+admintest
 admin@admin
 test
 guest

@@ -8,7 +8,7 @@
 
 ## Compile
 ```
-git clone https://github.com/Yinkozi/no-name
+git clone https://github.com/v4lproik/no-name
 cd no-name
 glide install
 go build main.go
@@ -28,6 +28,7 @@ docker-compose up -d
 ```
 curl --retry 10 --retry-delay 5 'http://localhost/setup.php' -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-US,en;q=0.8,fr;q=0.6' -H 'Upgrade-Insecure-Requests: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Cache-Control: max-age=0' -H 'Referer: http://localhost/setup.php' -H 'Connection: keep-alive' --data 'create_db=Create+%2F+Reset+Database' --compressed
 curl --retry 10 --retry-delay 5 'http://localhost:8081/set-up-database.php'
+curl --retry 10 --retry-delay 5 'http://localhost:8080/WebGoat/register.mvc' -H 'Origin: http://localhost:8080' -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-GB,da-DK;q=0.8,da;q=0.6,fr-CA;q=0.4,fr;q=0.2,en-US;q=0.2,en;q=0.2' -H 'Upgrade-Insecure-Requests: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Cache-Control: max-age=0' -H 'Referer: http://localhost:8080/WebGoat/register.mvc' -H 'Connection: keep-alive' --data 'username=admintest&password=admintest&matchingPassword=admintest&agree=agree' --compressed
 ```
 3 - Launch tests  
 ```
