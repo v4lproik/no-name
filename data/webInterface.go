@@ -11,8 +11,10 @@ type WebInterface struct {
 
 	Doc *goquery.Document
 	Form *domain.Form
+
+	ReportPath string
 }
 
 func NewWebInterface(webClient *client.Web) *WebInterface{
-	return &WebInterface{webClient, nil, domain.NewForm()}
+	return &WebInterface{webClient, nil, domain.NewForm(), ""}
 }

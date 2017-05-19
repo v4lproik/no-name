@@ -86,7 +86,7 @@ func setUp(optsFavicon string, optsIps string, optsOutput string) {
 	// set default output
 	//OUTPUT = 0
 
-	// create the chains findform -> findid -> bruteforce
+	// create the chains findform -> findid -> bruteforce -> report
 	channels := initChannels(len(ips))
 	chains := initChains(ips)
 
@@ -94,8 +94,10 @@ func setUp(optsFavicon string, optsIps string, optsOutput string) {
 	for idx, chain := range chains {
 		channel := channels[idx]
 		go func(channel chan string, idx int, chain module.Module) {
-			chain.Request(true, data.NewWebInterface(client.NewWeb(ips[idx])))
-			channel <- "chain " + strconv.Itoa(idx) + " has finished"
+			webInterface := data.NewWebInterface(client.NewWeb(ips[idx]))
+
+			chain.Request(true, webInterface)
+			channel <- "chain " + strconv.Itoa(idx) + " has finished with report " + webInterface.ReportPath
 		}(channel, idx, chain)
 	}
 

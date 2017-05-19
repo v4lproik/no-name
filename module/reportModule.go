@@ -102,6 +102,8 @@ func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
 	}else{
 		fmt.Fprintf(f, "%s", m.io)
 		logger.Infof("Report has been created at " + filename)
+
+		wi.ReportPath = filename
 	}
 }
 
