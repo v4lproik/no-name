@@ -32,6 +32,8 @@ func NewReportModuleWithSource(rootDir string, format data.ReportFormat, io io.W
 		formatChoosen = "txt"
 	}
 
+	createReportFolder()
+
 	return &reportModule{io, formatChoosen, rootDir, nil}
 }
 
@@ -47,7 +49,18 @@ func NewReportModule(templateDir string, format data.ReportFormat) *reportModule
 
 	var buf bytes.Buffer
 
+	createReportFolder()
+
 	return &reportModule{&buf, formatChoosen, templateDir, nil}
+}
+
+func createReportFolder() {
+	if _, err := os.Stat(REPORT_FOLDER); os.IsNotExist(err) {
+		err := os.Mkdir(REPORT_FOLDER, os.FileMode(0755))
+		if err != nil {
+			logger.Criticalf(err.Error())
+		}
+	}
 }
 
 func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
