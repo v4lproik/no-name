@@ -20,34 +20,28 @@ type reportModule struct {
 	next Module
 }
 
-type Format int
-const (
-	HTML Format = iota
-	GREPABLE
-)
-
 const REPORT_FOLDER = "./report"
 
-func NewReportModuleWithSource(rootDir string, format Format, io io.Writer) *reportModule{
+func NewReportModuleWithSource(rootDir string, format data.ReportFormat, io io.Writer) *reportModule{
 
 	formatChoosen := ""
 	switch format {
-	case HTML:
+	case data.HTML:
 		formatChoosen = "html"
-	case GREPABLE:
+	case data.GREPABLE:
 		formatChoosen = "txt"
 	}
 
 	return &reportModule{io, formatChoosen, rootDir, nil}
 }
 
-func NewReportModule(templateDir string, format Format) *reportModule{
+func NewReportModule(templateDir string, format data.ReportFormat) *reportModule{
 
 	formatChoosen := ""
 	switch format {
-	case HTML:
+	case data.HTML:
 		formatChoosen = "html"
-	case GREPABLE:
+	case data.GREPABLE:
 		formatChoosen = "txt"
 	}
 

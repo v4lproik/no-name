@@ -35,9 +35,6 @@ const PASSWORD = "conf/password.txt"
 const DEFAULT_PASSWORD = "conf/default-password-web-interface.txt"
 const HTML_TAGS_NAMES = "conf/html-detection-tags.txt"
 
-const HTML = 0
-const GREPABLE = 1
-
 func banner() {
 	var banner = `
 	|----------------------------------------------------------|
@@ -66,12 +63,19 @@ func main() {
 	}
 
 	// parse optsOutput
-	if opts.Output != "html" && opts.Output != "grep" {
+	reportFormat := data.ReportFormat(0)
+	switch opts.Output {
+	case "grep":
+		reportFormat = data.GREPABLE
+	case "html":
+		reportFormat = data.HTML
+	default:
 		panic(parser.Usage)
+
 	}
 
 	// setting up the different objects
-	ips, channels, chains := setUp(opts.Favicons, opts.Ips, opts.Output)
+	ips, channels, chains := setUp(opts.Favicons, opts.Ips, reportFormat)
 
 	// launch the chains
 	launchChains(ips, channels, chains)
@@ -88,12 +92,12 @@ func launchChains(ips []string, channels []chan string, chains []module.Module) 
 			webInterface := data.NewWebInterface(client.NewWeb(ips[idx]))
 
 			chain.Request(true, webInterface)
-			channel <- "chain " + strconv.Itoa(idx) + " has finished with report " + webInterface.ReportPath
+			channel <- webInterface.ReportPath
 		}(channel, idx, chain)
 	}
 }
 
-func setUp(optsFavicon string, optsIps string, optsOutput string) ([]string, []chan string, []module.Module) {
+func setUp(optsFavicon string, optsIps string, optsOutput data.ReportFormat) ([]string, []chan string, []module.Module) {
 
 	// parse favicons database
 	favicons := getFavicons(optsFavicon)
@@ -103,12 +107,12 @@ func setUp(optsFavicon string, optsIps string, optsOutput string) ([]string, []c
 	ips := getIps(optsIps)
 	showIps(ips)
 
-	// set default output
-	//OUTPUT = 0
+	// get report output
+
 
 	// create the chains findform -> findid -> bruteforce -> report
 	channels := initChannels(len(ips))
-	chains := initChains(ips)
+	chains := initChains(ips, optsOutput)
 
 	return ips, channels, chains
 }
@@ -144,7 +148,7 @@ func getFavicons(filePath string) (map[string]string) {
 	return favicons
 }
 
-func initChains(ips []string) ([]module.Module) {
+func initChains(ips []string, reportFormat data.ReportFormat) ([]module.Module) {
 	chains := make([]module.Module, len(ips))
 
 	// parse default password database
@@ -159,7 +163,7 @@ func initChains(ips []string) ([]module.Module) {
 		secondModule := module.NewFindFormModule(strconv.Itoa(key), htmlTagsNames)
 		thirdModule := module.NewFaviconModule(credentials)
 		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST)
-		fifthModule := module.NewReportModule(rootDir, HTML)
+		fifthModule := module.NewReportModule(rootDir, reportFormat)
 
 		firstModule.SetNextModule(secondModule)
 		secondModule.SetNextModule(thirdModule)

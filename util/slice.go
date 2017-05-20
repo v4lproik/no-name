@@ -8,3 +8,12 @@ func Contains(stringSlice []string, searchString string) bool {
 	}
 	return false
 }
+
+func ContainsGetIndex(stringSlice []string, searchString string) int {
+	for key, value := range stringSlice {
+		if value == searchString {
+			return key
+		}
+	}
+	return -1
+}
