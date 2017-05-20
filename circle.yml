@@ -34,7 +34,7 @@ dependencies:
     - sudo /etc/init.d/mysql stop
     - sudo apt-get remove --purge mysql mysql-server
     #start containers
-    - docker-compose up -d; sleep 10
+    - docker-compose up -d; sleep 30
 
 test:
   pre:
