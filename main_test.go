@@ -34,7 +34,7 @@ func TestNewCredentials(t *testing.T) {
 			}
 		}else{
 			if strings.Contains(value, ":80/") {
-				if !strings.Contains(value, "//") {
+				if !strings.Contains(value, "admin/password") {
 					t.Error("The credentials cannot be found for the vulnerable box on port 80")
 				}
 			} else {
