@@ -54,6 +54,9 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 				case util.Contains(m.htmlTagsNames.PasswordNames, names):
 					logger.Debugf("Password has been found with name <" + names + ">")
 					form.PasswordArg = names
+				case util.ContainsRegex(m.htmlTagsNames.CsrfNames, names):
+					logger.Debugf("Csrf has been found with name <" + names + ">")
+					form.CsrfArg = names
 				}
 			}
 

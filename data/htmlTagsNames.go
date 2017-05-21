@@ -8,6 +8,7 @@ import (
 type HtmlTagsNames struct {
 	UsernameNames []string
 	PasswordNames []string
+	CsrfNames []string
 }
 
 func NewHtmlTagsNames(pathDefault string) (*HtmlTagsNames){
@@ -17,7 +18,7 @@ func NewHtmlTagsNames(pathDefault string) (*HtmlTagsNames){
 		return nil
 	}
 
-	htmlTagsNames := HtmlTagsNames{nil, nil}
+	htmlTagsNames := HtmlTagsNames{nil, nil, nil}
 	json.Unmarshal(content, &htmlTagsNames)
 
 	return &htmlTagsNames
