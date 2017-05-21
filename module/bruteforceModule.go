@@ -32,30 +32,18 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 		wi.Form.PasswordArg != "" &&
 		wi.Form.UsernameArg != ""
 
+	//TODO: need to create a retry system in case of timeout
 	if condition {
 		logger.Debugf("Start bruteforcing")
 
-		values := make(url.Values)
-		values.Set(wi.Form.UsernameArg, "test")
-		values.Set(wi.Form.PasswordArg, "test")
-
-		for k, v := range wi.Form.OtherArgWithValue {
-			values.Set(k, v)
-		}
+		values := m.getHTTPArguments(wi, "TEST", "TEST")
 
 		//get page with errors for comparison purpose
-		resWithBadCredentials := ""
-		res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
+		resWithBadCredentials, err := m.getErrorCredentialsPage(wi, values)
 		if err != nil {
-			logger.Errorf("Url bruteforce can't be reached ", err.Error())
-		}else{
-			doc, err := wi.ClientWeb.GetDocument(res)
-			if err != nil {
-				logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
-			}
-			resWithBadCredentials = doc.Text()
+			logger.Errorf(err.Error())
+			return
 		}
-
 
 		//start bruteforcing
 		if resWithBadCredentials != "" {
@@ -63,11 +51,10 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 			for _, usernameTry := range m.credentials.Logins {
 				for _, passwordTry := range m.credentials.Passwords {
 					// bruteforce ON
-					values.Set(wi.Form.UsernameArg, usernameTry)
-					values.Set(wi.Form.PasswordArg, passwordTry)
+					values := m.getHTTPArguments(wi, usernameTry, passwordTry)
 
 					resWithPotentialGoodCredentials := ""
-					res, err = wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
+					res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
 					if err != nil {
 						logger.Errorf("Url bruteforce can't be reached ", err.Error())
 					}else{
@@ -97,12 +84,57 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 				}
 			}
 		}
-
 	}
 
 	if flag && m.next != nil{
 		m.next.Request(flag, wi)
 	}
+}
+
+func (m *bruteforceModule) getHTTPArguments(wi *data.WebInterface, username string, password string) (url.Values) {
+	values := make(url.Values)
+	values.Set(wi.Form.UsernameArg, username)
+	values.Set(wi.Form.PasswordArg, password)
+
+	for k, v := range wi.Form.OtherArgWithValue {
+		values.Set(k, v)
+	}
+
+	if wi.Form.CsrfArg != "" {
+		res, err := wi.ClientWeb.ScrapWithNoParameter(wi.Form.UrlForm, "GET")
+
+		if err != nil {
+			logger.Errorf("Url to get csrf can't be reached out", err.Error())
+		}else{
+			doc, err := wi.ClientWeb.GetDocument(res)
+			if err != nil {
+				logger.Errorf("Document csrf can't be transformed into document", err.Error())
+			}
+
+			csrfValue, _ := util.GetCsrfInDocument(doc, wi.Form.CsrfArg)
+			if csrfValue != "" {
+				values.Set(wi.Form.CsrfArg, csrfValue)
+			}
+		}
+	}
+
+	return values
+}
+
+func (m *bruteforceModule) getErrorCredentialsPage(wi *data.WebInterface, values url.Values) (string, error) {
+	res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
+	if err != nil {
+		logger.Errorf("Url bruteforce can't be reached ", err.Error())
+		return "", err
+	}
+
+	doc, err := wi.ClientWeb.GetDocument(res)
+	if err != nil {
+		logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
+		return "", err
+	}
+
+	return doc.Text(), nil
 }
 
 func (m *bruteforceModule) SetNextModule(next Module){

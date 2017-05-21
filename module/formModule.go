@@ -24,7 +24,16 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 
 		form := wi.Form
 
-		// find url to submit the form
+		formHtml := wi.Doc.Find("form")
+		if len(formHtml.Nodes) < 1 {
+			logger.Infof("No form has been found for url " + wi.ClientWeb.Url.String())
+			return
+		}
+
+		// set the url of the form
+		wi.Form.UrlForm = wi.ClientWeb.Url.RequestURI()
+
+		// find arguments to submit the form
 		wi.Doc.Find("form").Each(func(i int, s *goquery.Selection) {
 			action, exists := s.Attr("action")
 			if exists {

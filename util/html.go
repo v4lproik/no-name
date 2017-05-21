@@ -31,6 +31,7 @@ func IsFaviconInDocument(doc *goquery.Document) (string, error){
 				if exists{
 					loggerUtilHTML.Debugf("Favicon found at address " + href)
 					urlFavicon = href
+					return
 				}
 			}
 		}
@@ -38,4 +39,27 @@ func IsFaviconInDocument(doc *goquery.Document) (string, error){
 
 
 	return urlFavicon, nil
+}
+
+func GetCsrfInDocument(doc *goquery.Document, csrfName string) (string, error){
+	if doc == nil {
+		return "", nil
+	}
+
+	csrfValue := ""
+	doc.Find("form input").Each(func(i int, s *goquery.Selection) {
+		value, existsValue := s.Attr("value")
+		if existsValue {
+			name, existsName := s.Attr("name")
+			if existsName {
+				if name == csrfName {
+					loggerUtilHTML.Debugf("Csrf found with value " + value)
+					csrfValue = value
+					return
+				}
+			}
+		}
+	})
+
+	return csrfValue, nil
 }

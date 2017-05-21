@@ -99,6 +99,51 @@ func (w *Web) ScrapWithParameter(path string, method string, values url.Values) 
 	return nil, nil
 }
 
+func (w *Web) ScrapWithNoParameter(path string, method string) (*http.Response, error){
+	scheme := w.Url.Scheme
+	host := w.Url.Host
+
+	if method == "POST" || method == "post"{
+
+		urlToRequest := ""
+		if strings.HasPrefix(path, "/") {
+			urlToRequest = scheme + "://" + host + path
+		}else{
+			urlToRequest = scheme + "://" + host + "/" + path
+		}
+
+		res, err := w.client.PostForm(urlToRequest, url.Values{})
+		if err != nil {
+			return nil, err
+		}
+		//print(res.Request)
+		//output, err := httputil.DumpRequest(res.Request, true)
+		//loggerWeb.Debugf(string(output))
+
+		return res, nil
+	}else {
+		if method == "GET" || method == "get" {
+
+			// craft url
+			urlToRequest := ""
+			if strings.HasPrefix("/", path) {
+				urlToRequest = scheme + "://" + host + path
+			}else{
+				urlToRequest = scheme + "://" + host + "/" + path
+			}
+
+			// submit form
+			res, err := w.client.Get(urlToRequest)
+			if err != nil {
+				return nil, err
+			}
+			return res, nil
+		}
+	}
+
+	return nil, nil
+}
+
 func (w *Web) CraftUrl(path string) (string){
 	url, err := url.Parse(path)
 	if err != nil {
