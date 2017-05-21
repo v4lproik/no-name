@@ -33,3 +33,6 @@ report/
 *.iml
 main
 *.lock
+
+# Specific to project
+ip_test.txt
