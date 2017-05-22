@@ -21,14 +21,12 @@ func NewFindFormModule(name string, htmlTagsNames *data.HtmlTagsNames) *formModu
 func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 
 	if wi.Doc != nil {
-
 		form := wi.Form
-
 		formHtml := wi.Doc.Find("form")
+
 		if len(formHtml.Nodes) < 1 {
 			logger.Infof("No form has been found for url " + wi.ClientWeb.Url.String())
 		} else {
-
 			// set the url of the form
 			wi.Form.UrlForm = wi.ClientWeb.Url.RequestURI()
 
