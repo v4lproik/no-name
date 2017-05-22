@@ -10,6 +10,7 @@ import (
 	"time"
 	"github.com/google/uuid"
 	"path/filepath"
+	"strings"
 )
 
 type reportModule struct {
@@ -102,7 +103,7 @@ func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
 		logger.Criticalf("Cannot Get View ", err)
 	}
 
-	filename := filepath.Join(m.templateDir, REPORT_FOLDER) + "/" + "report-" + time.Now().String() + "_" + uuid.New().String() + "." + m.format
+	filename := filepath.Join(m.templateDir, REPORT_FOLDER) + "/" + "report-" + strings.Replace(time.Now().String() + "_" + uuid.New().String() + "." + m.format, " ", "_", -1)
 	f, err := os.Create(filename)
 	if err != nil {
 		logger.Criticalf("Cannot Create File for Report ", err)
