@@ -29,7 +29,7 @@ func TestNewHtmlReport(t *testing.T) {
 }
 
 func TestNewTxtReport(t *testing.T) {
-	t.Log("Call ReportModule with existing data and txt output should generate report")
+	t.Log("Call ReportModule with existing data and txt output should generate report with a name without spaces")
 
 	//given
 	wi := data.NewWebInterface(nil)
@@ -46,4 +46,8 @@ func TestNewTxtReport(t *testing.T) {
 	if !strings.Contains(buf.String(), wi.Form.PotentialPassword) || !strings.Contains(buf.String(), wi.Form.PotentialUsername) {
 		t.Errorf("Expected PotentialPassword and PotentialUsername to be in the report")
 	}
+	if strings.Contains(wi.ReportPath, " ") {
+		t.Errorf("The report's name should not contain any spaces")
+	}
+
 }
