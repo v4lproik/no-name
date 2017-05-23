@@ -1,7 +1,6 @@
 package client
 
 import (
-	"github.com/PuerkitoBio/goquery"
 	"github.com/juju/loggo"
 	"net/http"
 	"net/url"
@@ -9,14 +8,14 @@ import (
 	"strings"
 )
 
-type Web struct {
+type simpleWebClient struct {
 	client *http.Client
-	Url *url.URL
+	url    *url.URL
 }
 
 var loggerWeb = loggo.GetLogger("web")
 
-func NewWeb(ip string) (*Web){
+func NewSimpleWebClient(ip string) (*simpleWebClient){
 	client := http.DefaultClient
 	cookieJar, _ := cookiejar.New(nil)
 	client.Jar = cookieJar
@@ -31,13 +30,13 @@ func NewWeb(ip string) (*Web){
 		panic(err)
 	}
 
-	return &Web{client, url}
+	return &simpleWebClient{client, url}
 }
 
-func (w *Web) Scrap() (*http.Response, error){
-	scheme := w.Url.Scheme
-	host := w.Url.Host
-	path := w.Url.Path
+func (w *simpleWebClient) Scrap() (*http.Response, error){
+	scheme := w.url.Scheme
+	host := w.url.Host
+	path := w.url.Path
 
 	res, err := w.client.Get(scheme + "://" + host + path)
 	if err != nil {
@@ -50,13 +49,9 @@ func (w *Web) Scrap() (*http.Response, error){
 	return res, nil
 }
 
-func (w *Web) GetDocument(res *http.Response) (*goquery.Document, error){
-	return goquery.NewDocumentFromResponse(res)
-}
-
-func (w *Web) ScrapWithParameter(path string, method string, values url.Values) (*http.Response, error){
-	scheme := w.Url.Scheme
-	host := w.Url.Host
+func (w *simpleWebClient) ScrapWithParameter(path string, method string, values url.Values) (*http.Response, error){
+	scheme := w.url.Scheme
+	host := w.url.Host
 
 	if method == "POST" || method == "post"{
 
@@ -99,9 +94,9 @@ func (w *Web) ScrapWithParameter(path string, method string, values url.Values) 
 	return nil, nil
 }
 
-func (w *Web) ScrapWithNoParameter(path string, method string) (*http.Response, error){
-	scheme := w.Url.Scheme
-	host := w.Url.Host
+func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*http.Response, error){
+	scheme := w.url.Scheme
+	host := w.url.Host
 
 	if method == "POST" || method == "post"{
 
@@ -144,15 +139,15 @@ func (w *Web) ScrapWithNoParameter(path string, method string) (*http.Response, 
 	return nil, nil
 }
 
-func (w *Web) CraftUrl(path string) (string){
+func (w *simpleWebClient) CraftUrl(path string) (string){
 	url, err := url.Parse(path)
 	if err != nil {
 		loggerWeb.Errorf(err.Error())
 	}
 
 	if url.Host == "" {
-		scheme := w.Url.Scheme
-		host := w.Url.Path
+		scheme := w.url.Scheme
+		host := w.url.Path
 
 		return scheme + "://" + host + "/" + path
 	}
@@ -160,7 +155,6 @@ func (w *Web) CraftUrl(path string) (string){
 	return path
 }
 
-// setter for client
-func (w *Web) SetCookieJar(cookies []*http.Cookie){
-	w.client.Jar.SetCookies(w.Url,cookies)
+func (w *simpleWebClient) GetUrl() (*url.URL) {
+	return w.url
 }

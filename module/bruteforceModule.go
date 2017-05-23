@@ -58,7 +58,7 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 					if err != nil {
 						logger.Errorf("Url bruteforce can't be reached ", err.Error())
 					}else{
-						doc, err := wi.ClientWeb.GetDocument(res)
+						doc, err := util.GetDocument(res)
 						if err != nil {
 							logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
 						}
@@ -106,7 +106,7 @@ func (m *bruteforceModule) getHTTPArguments(wi *data.WebInterface, username stri
 		if err != nil {
 			logger.Errorf("Url to get csrf can't be reached out", err.Error())
 		}else{
-			doc, err := wi.ClientWeb.GetDocument(res)
+			doc, err := util.GetDocument(res)
 			if err != nil {
 				logger.Errorf("Document csrf can't be transformed into document", err.Error())
 			}
@@ -128,7 +128,7 @@ func (m *bruteforceModule) getErrorCredentialsPage(wi *data.WebInterface, values
 		return "", err
 	}
 
-	doc, err := wi.ClientWeb.GetDocument(res)
+	doc, err := util.GetDocument(res)
 	if err != nil {
 		logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
 		return "", err

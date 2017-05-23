@@ -89,7 +89,7 @@ func launchChains(ips []string, channels []chan string, chains []module.Module) 
 	for idx, chain := range chains {
 		channel := channels[idx]
 		go func(channel chan string, idx int, chain module.Module) {
-			webInterface := data.NewWebInterface(client.NewWeb(ips[idx]))
+			webInterface := data.NewWebInterface(client.NewSimpleWebClient(ips[idx]))
 
 			chain.Request(true, webInterface)
 			channel <- webInterface.ReportPath
@@ -106,9 +106,6 @@ func setUp(optsFavicon string, optsIps string, optsOutput data.ReportFormat) ([]
 	// parse ips to scan
 	ips := getIps(optsIps)
 	showIps(ips)
-
-	// get report output
-
 
 	// create the chains findform -> findid -> bruteforce -> report
 	channels := initChannels(len(ips))

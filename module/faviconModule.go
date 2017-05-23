@@ -45,7 +45,7 @@ func (m *faviconModule) Request(flag bool, wi *data.WebInterface) {
 		if err != nil {
 			logger.Errorf("Favicon can't be reached ", err.Error())
 		}else{
-			fav, err := wi.ClientWeb.GetDocument(res)
+			fav, err := util.GetDocument(res)
 			if err != nil {
 				logger.Errorf("Favicon data can't be transformed into document", err.Error())
 			}

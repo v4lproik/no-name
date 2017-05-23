@@ -5,9 +5,14 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/juju/loggo"
 	"strings"
+	"net/http"
 )
 
 var loggerUtilHTML = loggo.GetLogger("utilHTML")
+
+func GetDocument(res *http.Response) (*goquery.Document, error){
+	return goquery.NewDocumentFromResponse(res)
+}
 
 func GetDiffBetweenTwoPages(page1 string, page2 string) (float64){
 	sequenceMatcher := difflib.SequenceMatcher{}

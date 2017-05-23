@@ -7,7 +7,7 @@ import (
 )
 
 type WebInterface struct {
-	ClientWeb *client.Web
+	ClientWeb client.WebClient
 
 	Doc *goquery.Document
 	Form *domain.Form
@@ -15,6 +15,6 @@ type WebInterface struct {
 	ReportPath string
 }
 
-func NewWebInterface(webClient *client.Web) *WebInterface{
+func NewWebInterface(webClient client.WebClient) *WebInterface{
 	return &WebInterface{webClient, nil, domain.NewForm(), ""}
 }

@@ -17,7 +17,7 @@ func TestNewFormModule(t *testing.T) {
 
 	//given
 	ip := "127.0.1.7/formpath?arguments"
-	webClient := client.NewWeb(ip)
+	webClient := client.NewSimpleWebClient(ip)
 	wi := data.NewWebInterface(webClient)
 	wi.Doc, _ = goquery.NewDocumentFromReader(strings.NewReader(`"<html><form action="url_to_submit" method="POST"><input type="text" name="username" /><input type="password" name="password"><input type="text" name="otherinput" value="random"/><input type="hidden" name="user_token" value="csrftoken" /></form></html>"`))
 	htmlTagsNames := data.NewHtmlTagsNames(CWD[:strings.LastIndex(CWD, "/")] + "/" + HTML_TAGS_NAMES_TEST)

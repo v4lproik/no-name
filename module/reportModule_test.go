@@ -49,5 +49,4 @@ func TestNewTxtReport(t *testing.T) {
 	if strings.Contains(wi.ReportPath, " ") {
 		t.Errorf("The report's name should not contain any spaces")
 	}
-
 }

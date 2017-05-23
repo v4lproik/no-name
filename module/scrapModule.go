@@ -3,6 +3,7 @@ package module
 import (
 	"github.com/juju/loggo"
 	"github.com/v4lproik/no-name/data"
+	"github.com/v4lproik/no-name/util"
 )
 
 var logger = loggo.GetLogger("scrapModule")
@@ -19,18 +20,18 @@ func (m *scrapModule) Request(flag bool, wi *data.WebInterface) {
 
 	res, err := wi.ClientWeb.Scrap()
 	if err != nil {
-		logger.Errorf("Can't reach url " + wi.ClientWeb.Url.RequestURI(), err)
+		logger.Errorf("Can't reach url " + wi.ClientWeb.GetUrl().RequestURI(), err.Error())
 		return
 	}
 
-	doc, err := wi.ClientWeb.GetDocument(res)
+	doc, err := util.GetDocument(res)
 	if err != nil {
-		logger.Errorf("Can't transform response to document")
+		logger.Errorf("Can't transform response to document", err.Error())
 		return
 	}
 
 	wi.Doc = doc
-	wi.Form.Domain = wi.ClientWeb.Url.Host
+	wi.Form.Domain = wi.ClientWeb.GetUrl().Host
 
 	if flag && m.next != nil{
 		m.next.Request(flag, wi)
