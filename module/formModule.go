@@ -9,12 +9,12 @@ import (
 
 type formModule struct {
 	name string
-	htmlTagsNames *data.HtmlTagsNames
+	htmlTagsNames *data.HtmlSearchValues
 
 	next Module
 }
 
-func NewFindFormModule(name string, htmlTagsNames *data.HtmlTagsNames) *formModule {
+func NewFindFormModule(name string, htmlTagsNames *data.HtmlSearchValues) *formModule {
 	return &formModule{name, htmlTagsNames, nil}
 }
 
