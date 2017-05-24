@@ -91,7 +91,11 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 					}
 				}
 
-				wi.Form = form
+
+				//default values for non found input
+				if form.UrlToSubmit == "" {
+					form.UrlToSubmit = form.UrlForm
+				}
 			})
 
 		}
