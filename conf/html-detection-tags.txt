@@ -1,5 +1,5 @@
 {
-    "UsernameNames":["username"],
+    "UsernameNames":["username", "email"],
     "PasswordNames":["password"],
     "CsrfNames":[".*csrf.*", ".*_token"]
 }
