@@ -22,6 +22,12 @@ open-ninja:
   ports:
     - "8899:80"
 
+wordpress:
+  image: "wpscanteam/vulnerablewordpress"
+  ports:
+    - "8088:80"
+    - "3305:3306"
+
 mysql:
   image: "mysql/mysql-server"
   ports:
