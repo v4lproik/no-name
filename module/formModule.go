@@ -81,11 +81,11 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 					}
 				}
 
-				// find by value
+				// find by value and if this value is not already contained as a username, password etc
 				value, existsValue := s.Attr("value")
 				if existsValue {
 					name, existsName := s.Attr("name")
-					if existsName {
+					if existsName && name != form.UsernameArg && name != form.PasswordArg && name != form.CsrfArg {
 						form.OtherArgWithValue[name] = value
 						logger.Debugf("Couple name=value has been found <" + name + "=" + value + ">")
 					}
