@@ -75,7 +75,8 @@ func main() {
 	}
 
 	// setting up the different objects
-	ips, channels, chains := setUp(opts.Favicons, opts.Ips, reportFormat)
+	ips, channels, chains := setUp(opts.Favicons, opts.Ips, reportFormat, DEFAULT_PASSWORD,
+		PASSWORD, LOGIN, HTML_TAGS_NAMES)
 
 	// launch the chains
 	launchChains(ips, channels, chains)
@@ -97,7 +98,8 @@ func launchChains(ips []string, channels []chan string, chains []module.Module) 
 	}
 }
 
-func setUp(optsFavicon string, optsIps string, optsOutput data.ReportFormat) ([]string, []chan string, []module.Module) {
+func setUp(optsFavicon string, optsIps string, optsOutput data.ReportFormat, defaultPasswordPath string,
+	passwordPath string, loginPath string, htmlTagsNamesPath string) ([]string, []chan string, []module.Module) {
 
 	// parse favicons database
 	favicons := getFavicons(optsFavicon)
@@ -107,9 +109,15 @@ func setUp(optsFavicon string, optsIps string, optsOutput data.ReportFormat) ([]
 	ips := getIps(optsIps)
 	showIps(ips)
 
+	// parse default password database
+	credentials := data.NewCredentials(defaultPasswordPath, passwordPath, loginPath)
+
+	//parse html tags' names
+	htmlTagsNames := data.NewHtmlTagsNames(htmlTagsNamesPath)
+
 	// create the chains findform -> findid -> bruteforce -> report
 	channels := initChannels(len(ips))
-	chains := initChains(ips, optsOutput)
+	chains := initChains(ips, optsOutput, credentials, htmlTagsNames)
 
 	return ips, channels, chains
 }
@@ -145,14 +153,8 @@ func getFavicons(filePath string) (map[string]string) {
 	return favicons
 }
 
-func initChains(ips []string, reportFormat data.ReportFormat) ([]module.Module) {
+func initChains(ips []string, reportFormat data.ReportFormat, credentials *data.Credentials, htmlTagsNames *data.HtmlTagsNames) ([]module.Module) {
 	chains := make([]module.Module, len(ips))
-
-	// parse default password database
-	credentials := data.NewCredentials(DEFAULT_PASSWORD, PASSWORD, LOGIN)
-
-	//parse html tags' names
-	htmlTagsNames := data.NewHtmlTagsNames(HTML_TAGS_NAMES)
 
 	// init chains
 	for key, _ := range ips  {
