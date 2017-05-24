@@ -5,20 +5,21 @@ import (
 	"io/ioutil"
 )
 
-type HtmlTagsNames struct {
+type HtmlSearchValues struct {
 	UsernameNames []string
 	PasswordNames []string
 	CsrfNames []string
+	LoginPatterns []string
 }
 
-func NewHtmlTagsNames(pathDefault string) (*HtmlTagsNames){
+func NewHtmlSearchValues(pathDefault string) (*HtmlSearchValues){
 	content, err := ioutil.ReadFile(pathDefault)
 	if err != nil {
 		logger.Errorf(err.Error())
 		return nil
 	}
 
-	htmlTagsNames := HtmlTagsNames{nil, nil, nil}
+	htmlTagsNames := HtmlSearchValues{nil, nil, nil, nil}
 	json.Unmarshal(content, &htmlTagsNames)
 
 	return &htmlTagsNames

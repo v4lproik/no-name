@@ -113,7 +113,7 @@ func setUp(optsFavicon string, optsIps string, optsOutput data.ReportFormat, def
 	credentials := data.NewCredentials(defaultPasswordPath, passwordPath, loginPath)
 
 	//parse html tags' names
-	htmlTagsNames := data.NewHtmlTagsNames(htmlTagsNamesPath)
+	htmlTagsNames := data.NewHtmlSearchValues(htmlTagsNamesPath)
 
 	// create the chains findform -> findid -> bruteforce -> report
 	channels := initChannels(len(ips))
@@ -153,7 +153,7 @@ func getFavicons(filePath string) (map[string]string) {
 	return favicons
 }
 
-func initChains(ips []string, reportFormat data.ReportFormat, credentials *data.Credentials, htmlTagsNames *data.HtmlTagsNames) ([]module.Module) {
+func initChains(ips []string, reportFormat data.ReportFormat, credentials *data.Credentials, htmlTagsNames *data.HtmlSearchValues) ([]module.Module) {
 	chains := make([]module.Module, len(ips))
 
 	// init chains
@@ -161,7 +161,7 @@ func initChains(ips []string, reportFormat data.ReportFormat, credentials *data.
 		firstModule := module.NewScrapModule()
 		secondModule := module.NewFindFormModule(strconv.Itoa(key), htmlTagsNames)
 		thirdModule := module.NewFaviconModule(credentials)
-		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST)
+		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST, htmlTagsNames.LoginPatterns)
 		fifthModule := module.NewReportModule(rootDir, reportFormat)
 
 		firstModule.SetNextModule(secondModule)

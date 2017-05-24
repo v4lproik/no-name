@@ -5,21 +5,18 @@ import (
 	"net/url"
 	"github.com/v4lproik/no-name/util"
 	"strconv"
-	"crypto/md5"
-	"hash"
 )
 
 type bruteforceModule struct {
 	credentials *data.Credentials
-
-	hasher hash.Hash
+	htmlSearchValues []string
 
 	stopFirstFound bool
 	next Module
 }
 
-func NewBruteforceModule(credentials *data.Credentials, stopFirstFound bool) *bruteforceModule{
-	return &bruteforceModule{credentials, md5.New(), stopFirstFound, nil}
+func NewBruteforceModule(credentials *data.Credentials, stopFirstFound bool, htmlSearchValues []string) *bruteforceModule{
+	return &bruteforceModule{credentials, htmlSearchValues, stopFirstFound, nil}
 }
 
 func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
@@ -62,19 +59,30 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 						if err != nil {
 							logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
 						}
-
 						resWithPotentialGoodCredentials = doc.Text()
 					}
 
 					ratioDiff := util.GetDiffBetweenTwoPages(resWithBadCredentials, resWithPotentialGoodCredentials)
 					logger.Debugf("Ratio <" + usernameTry + "/" + passwordTry + ">" + strconv.FormatFloat(ratioDiff, 'f', 6, 64))
-					if ratioDiff < 0.92 {
+
+					switch {
+					case ratioDiff < 0.92:
 						logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
 						wi.Form.PotentialUsername = usernameTry
 						wi.Form.PotentialPassword = passwordTry
 						found = true;
 						if m.stopFirstFound {
 							break;
+						}
+					case ratioDiff >= 0.92 && ratioDiff <= 99:
+						if(util.ContainsRegex(m.htmlSearchValues, resWithPotentialGoodCredentials)) {
+							logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
+							wi.Form.PotentialUsername = usernameTry
+							wi.Form.PotentialPassword = passwordTry
+							found = true;
+							if m.stopFirstFound {
+								break;
+							}
 						}
 					}
 				}
@@ -93,12 +101,12 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 
 func (m *bruteforceModule) getHTTPArguments(wi *data.WebInterface, username string, password string) (url.Values) {
 	values := make(url.Values)
-	values.Set(wi.Form.UsernameArg, username)
-	values.Set(wi.Form.PasswordArg, password)
 
 	for k, v := range wi.Form.OtherArgWithValue {
 		values.Set(k, v)
 	}
+	values.Set(wi.Form.UsernameArg, username)
+	values.Set(wi.Form.PasswordArg, password)
 
 	if wi.Form.CsrfArg != "" {
 		res, err := wi.ClientWeb.ScrapWithNoParameter(wi.Form.UrlForm, "GET")

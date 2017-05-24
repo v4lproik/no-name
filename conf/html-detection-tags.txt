@@ -1,5 +1,6 @@
 {
-    "UsernameNames":["username", "email"],
-    "PasswordNames":["password"],
-    "CsrfNames":[".*csrf.*", ".*_token"]
+    "UsernameNames":[".*username.*", "email", ".*uname.*"],
+    "PasswordNames":[".*password.*", ".*pwd.*"],
+    "CsrfNames":[".*csrf.*", ".*_token"],
+    "LoginPatterns": ["Login Successful", "Logout", "Log out"]
 }
