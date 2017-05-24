@@ -77,7 +77,12 @@ func (m *formModule) Request(flag bool, wi *data.WebInterface) {
 
 					case strings.Contains(types, "password"):
 						logger.Debugf("Password input has been found with type <" + types + ">")
-						form.PasswordArg = types
+
+						names, exists := s.Attr("name")
+						if exists {
+							form.PasswordArg = names
+						}
+
 					}
 				}
 
