@@ -59,16 +59,21 @@ func (w *simpleWebClient) ScrapWithParameter(path string, method string, values 
 		if strings.HasPrefix(path, "/") {
 			urlToRequest = scheme + "://" + host + path
 		}else{
-			urlToRequest = scheme + "://" + host + "/" + path
+			if  strings.HasPrefix(path,"http"){
+				urlToRequest = path
+			}else{
+				urlToRequest = scheme + "://" + host + "/" + path
+			}
 		}
 
 		res, err := w.client.PostForm(urlToRequest, values)
 		if err != nil {
 			return nil, err
 		}
-		//print(res.Request)
+		//fmt.Println(values)
+		//fmt.Println(res.Request)
 		//output, err := httputil.DumpRequest(res.Request, true)
-		//loggerWeb.Debugf(string(output))
+		//fmt.Println(string(output))
 
 		return res, nil
 	}else {
@@ -79,7 +84,11 @@ func (w *simpleWebClient) ScrapWithParameter(path string, method string, values 
 			if strings.HasPrefix("/", path) {
 				urlToRequest = scheme + "://" + host + path + "?" + values.Encode()
 			}else{
-				urlToRequest = scheme + "://" + host + "/" + path + "?" + values.Encode()
+				if  strings.HasPrefix(path,"http"){
+					urlToRequest = path + "?" + values.Encode()
+				}else{
+					urlToRequest = scheme + "://" + host + "/" + path + "?" + values.Encode()
+				}
 			}
 
 			// submit form
@@ -98,14 +107,18 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 	scheme := w.url.Scheme
 	host := w.url.Host
 
-	if method == "POST" || method == "post"{
-
-		urlToRequest := ""
-		if strings.HasPrefix(path, "/") {
-			urlToRequest = scheme + "://" + host + path
+	urlToRequest := ""
+	if strings.HasPrefix(path, "/") {
+		urlToRequest = scheme + "://" + host + path
+	}else{
+		if  strings.HasPrefix(path,"http"){
+			urlToRequest = path
 		}else{
 			urlToRequest = scheme + "://" + host + "/" + path
 		}
+	}
+
+	if method == "POST" || method == "post"{
 
 		res, err := w.client.PostForm(urlToRequest, url.Values{})
 		if err != nil {
@@ -118,14 +131,6 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 		return res, nil
 	}else {
 		if method == "GET" || method == "get" {
-
-			// craft url
-			urlToRequest := ""
-			if strings.HasPrefix("/", path) {
-				urlToRequest = scheme + "://" + host + path
-			}else{
-				urlToRequest = scheme + "://" + host + "/" + path
-			}
 
 			// submit form
 			res, err := w.client.Get(urlToRequest)
