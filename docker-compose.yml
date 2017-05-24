@@ -17,6 +17,11 @@ webgoat:
   ports:
     - "8080:8080"
 
+open-ninja:
+  image: "opendns/security-ninjas"
+  ports:
+    - "8899:80"
+
 mysql:
   image: "mysql/mysql-server"
   ports:

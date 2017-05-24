@@ -45,7 +45,13 @@ func TestNewCredentials(t *testing.T) {
 						t.Error("The credentials cannot be found for the vulnerable box on port 8081")
 					}
 				}else{
-					t.Errorf("A new vulnerable box has been added to the test without being tested " + value)
+					if strings.Contains(value, ":8899/") {
+						if !strings.Contains(value, "user1/user1_pass") {
+							t.Error("The credentials cannot be found for the vulnerable box on port 8899")
+						}
+					}else{
+						t.Errorf("A new vulnerable box has been added to the test without being tested " + value)
+					}
 				}
 			}
 		}
