@@ -1,5 +1,5 @@
 {
-    "UsernameNames":[".*username.*", "email", ".*uname.*, .*login.*", "log"],
+    "UsernameNames":[".*username.*", "email", ".*uname.*", ".*login.*", "log"],
     "PasswordNames":[".*password.*", ".*pwd.*", ".*pass.*"],
     "CsrfNames":[".*csrf.*", ".*_token"],
     "LoginPatterns": ["Login Successful", "Logout", "Log out"]
