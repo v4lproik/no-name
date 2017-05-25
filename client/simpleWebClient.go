@@ -144,6 +144,7 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 	return nil, nil
 }
 
+// TODO: refacto
 func (w *simpleWebClient) CraftUrl(path string) (string){
 	url, err := url.Parse(path)
 	if err != nil {
