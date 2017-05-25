@@ -1,5 +1,1 @@
-127.0.0.1:8080/WebGoat/login
-http://127.0.0.1:8081/index.php?page=login.php
-127.0.0.1:80
-127.0.0.1:8899/a8.html
 127.0.0.1:8088/wp-login.php
