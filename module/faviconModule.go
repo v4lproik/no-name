@@ -40,8 +40,7 @@ func (m *faviconModule) Request(flag bool, wi *data.WebInterface) {
 		}
 
 		//search by favicon md5 hash
-		urlToFavicon := wi.ClientWeb.CraftUrl(wi.Form.FaviconPath)
-		res, err := wi.ClientWeb.ScrapWithParameter(urlToFavicon, "GET", make(url.Values))
+		res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.FaviconPath, "GET", make(url.Values))
 		if err != nil {
 			logger.Errorf("Favicon can't be reached ", err.Error())
 		}else{
