@@ -1,1 +1,5 @@
-127.0.0.1:8088/wp-login.php
+localhost:8080/WebGoat/login
+http://localhost:8081/index.php?page=login.php
+localhost:80
+localhost:8899/a8.html
+localhost:8088/wp-login.php
