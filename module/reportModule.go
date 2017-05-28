@@ -105,7 +105,7 @@ func (m *reportModule) 	Request(flag bool, wi *data.WebInterface) {
 		logger.Criticalf("Cannot Get View ", err)
 	}
 
-	filename := filepath.Join(m.templateDir, REPORT_FOLDER) + "/" + "report-" + strings.Replace(time.Now().String() + "_" + uuid.New().String() + "." + m.format, " ", "_", -1)
+	filename := filepath.Join(m.templateDir, REPORT_FOLDER) + "/" + "report-" + strings.Replace(time.Now().String() + "_" + wi.Form.Domain + "_" + uuid.New().String() + "." + m.format, " ", "_", -1)
 	f, err := os.Create(filename)
 	if err != nil {
 		logger.Criticalf("Cannot Create File for Report ", err)
