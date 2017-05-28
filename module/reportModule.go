@@ -64,7 +64,7 @@ func createReportFolder() {
 	}
 }
 
-func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
+func (m *reportModule) 	Request(flag bool, wi *data.WebInterface) {
 
 	type reportModule struct {
 		Domain string
@@ -79,6 +79,7 @@ func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
 		PotentialPassword string
 		PotentialUsername string
 		SubmitArg string
+		CsrfArg string
 	}
 
 	info := reportModule{
@@ -94,6 +95,7 @@ func (m *reportModule) Request(flag bool, wi *data.WebInterface) {
 		wi.Form.PotentialPassword,
 		wi.Form.PotentialUsername,
 		wi.Form.SubmitArg,
+		wi.Form.CsrfArg,
 	}
 
 
