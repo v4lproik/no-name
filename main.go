@@ -19,7 +19,6 @@ var rootDir = ""
 type Options struct{
 	Ips string `short:"f" long:"filename" description:"File path containing the IPs to scan" required:"true"`
 	Favicons string `short:"d" long:"database" description:"File path containing the md5 computation of the web interface's favicon" required:"true"`
-	Modules string `short:"m" long:"module" description:"Modules you want to see running against the list of Ips you provided " required:"true"`
 	Output string `short:"o" long:"output" description:"Format of the report" required:"true"`
 }
 
