@@ -8,6 +8,16 @@ import (
 	"os"
 )
 
+var reportPaths = []string{}
+
+func TestMain(m *testing.M) {
+	code := m.Run()
+	for _, reportPath := range reportPaths {
+		os.Remove(reportPath)
+	}
+	os.Exit(code)
+}
+
 func TestNewHtmlReport(t *testing.T) {
 	t.Log("Call ReportModule with existing data and html output should generate report")
 
@@ -29,6 +39,8 @@ func TestNewHtmlReport(t *testing.T) {
 
 	// when
 	NewReportModuleWithSource(rootDir, 0, &buf).Request(false, wi)
+	reportPaths = append(reportPaths,  wi.ReportPath)
+
 
 	// then
 	if !strings.Contains(buf.String(), wi.Form.PotentialPassword) || !strings.Contains(buf.String(), wi.Form.PotentialUsername) {
@@ -61,6 +73,7 @@ func TestNewTxtReport(t *testing.T) {
 
 	// when
 	NewReportModuleWithSource(rootDir, 1, &buf).Request(false, wi)
+	reportPaths = append(reportPaths,  wi.ReportPath)
 
 	// then
 	if !strings.Contains(buf.String(), wi.Form.PotentialPassword) || !strings.Contains(buf.String(), wi.Form.PotentialUsername) {
@@ -81,6 +94,7 @@ func TestNewTxtReportNameWithoutSpaces(t *testing.T) {
 
 	// when
 	NewReportModuleWithSource(rootDir, 1, &buf).Request(false, wi)
+	reportPaths = append(reportPaths,  wi.ReportPath)
 
 	// then
 	if strings.Contains(wi.ReportPath, " ") {
