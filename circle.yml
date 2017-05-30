@@ -12,7 +12,7 @@ dependencies:
     - "~/docker"
 
   pre:
-    - sudo -H pip install docker-compose==1.8.0
+    - sudo -H pip install docker-compose==1.13.0
 
   post:
     - "wget https://raw.githubusercontent.com/v4lproik/no-name/master/configure-vulnerable-boxes.sh"
