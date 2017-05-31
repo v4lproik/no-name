@@ -38,5 +38,5 @@ test:
     - cd "$APP_PATH" && glide install
   override:
     - cd "$APP_PATH" && sh test.sh
-  after_success:
+  post:
     - bash <(curl -s https://codecov.io/bash)
