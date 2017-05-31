@@ -37,6 +37,6 @@ test:
     - ln -sf "$(pwd)" "$APP_PATH"
     - cd "$APP_PATH" && glide install
   override:
-    - cd "$APP_PATH" && go test -cover -coverprofile=coverage.txt $(glide nv)
+    - cd "$APP_PATH" && sh test.sh
   after_success:
     - bash <(curl -s https://codecov.io/bash)
