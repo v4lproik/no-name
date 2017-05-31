@@ -15,8 +15,8 @@ dependencies:
     - sudo -H pip install docker-compose==1.13.0
 
   post:
-    - "wget https://raw.githubusercontent.com/v4lproik/no-name/master/configure-vulnerable-boxes.sh localhost"
-    - "sh configure-vulnerable-boxes.sh"
+    - "wget https://raw.githubusercontent.com/v4lproik/no-name/master/configure-vulnerable-boxes.sh"
+    - "sh configure-vulnerable-boxes.sh localhost"
 
   override:
     #load docker cache
