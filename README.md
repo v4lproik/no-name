@@ -91,6 +91,13 @@ go build main.go
 14:21:37 INFO  scrapmodule reportModule.go:114 Report has been created at /Users/jrousseau/Programmation/go/src/github.com/v4lproik/no-name/report/report-2017-05-28_14:21:37.546175259_+0200_CEST_192.168.99.100:8088_d08d63ce-995f-43c6-9fa8-21a8fd31f635.html
 ```
 
+## Reporting
+Below, some report screenshots
+
+![Screenshot](screenshots/overview-info.png)
+![Screenshot](screenshots/form-info.png)
+![Screenshot](screenshots/bruteforce-info.png)
+
 ## Test
 1 - Download & Set up vulnerable boxes  
 ```
@@ -98,7 +105,7 @@ docker-compose up -d
 ```
 2 - Configure vulnerable boxes' databases - You may want to change the ip address inside this file so it matches your docker ip address
 ```
-sh configure-vulnerable-boxes.sh
+sh configure-vulnerable-boxes.sh <DOCKER_IP>
 ```
 3 - Launch tests  
 ```
