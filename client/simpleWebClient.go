@@ -34,11 +34,7 @@ func NewSimpleWebClient(ip string) (*simpleWebClient){
 }
 
 func (w *simpleWebClient) Scrap() (*http.Response, error){
-	scheme := w.url.Scheme
-	host := w.url.Host
-	path := w.url.Path
-
-	res, err := w.client.Get(scheme + "://" + host + path)
+	res, err := w.client.Get(w.craftUrlGet(w.url.Path, url.Values{}))
 	if err != nil {
 		return nil, err
 	}
