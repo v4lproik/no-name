@@ -5,12 +5,8 @@ import (
 	"github.com/v4lproik/no-name/data"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
-	"os"
 	"github.com/v4lproik/no-name/client"
 )
-
-const HTML_TAGS_NAMES_TEST = "conf/html-detection-tags_test.txt"
-var CWD, _ = os.Getwd()
 
 func TestNewFormModule(t *testing.T) {
 	t.Log("Call Form Module with a valid HTML form to analyse should get analysed by the module")
