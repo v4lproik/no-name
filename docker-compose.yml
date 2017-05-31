@@ -34,3 +34,8 @@ mysql:
     - "3306:3306"
   environment:
     - MYSQL_ROOT_PASSWORD=p@ssw0rd
+
+selenium-standalone:
+  image: "selenium/standalone-firefox-debug"
+  ports:
+    - "4444:4444"

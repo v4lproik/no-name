@@ -19,6 +19,7 @@ var rootDir = ""
 type Options struct{
 	Ips string `short:"f" long:"filename" description:"File path containing the IPs to scan" required:"true"`
 	Favicons string `short:"d" long:"database" description:"File path containing the md5 computation of the web interface's favicon" required:"true"`
+	Selenium string `short:"s" long:"selenium" description:"Whether you want to use a browser to trigger actions against your targets"`
 	Output string `short:"o" long:"output" description:"Format of the report" required:"true"`
 }
 
@@ -70,11 +71,10 @@ func main() {
 		reportFormat = data.HTML
 	default:
 		panic(parser.Usage)
-
 	}
 
 	// setting up the different objects
-	ips, channels, chains := setUp(opts.Favicons, opts.Ips, reportFormat, DEFAULT_PASSWORD,
+	ips, channels, chains := setUp(opts.Favicons, opts.Ips, opts.Selenium, reportFormat, DEFAULT_PASSWORD,
 		PASSWORD, LOGIN, HTML_TAGS_NAMES)
 
 	// launch the chains
@@ -97,7 +97,7 @@ func launchChains(ips []string, channels []chan string, chains []module.Module) 
 	}
 }
 
-func setUp(optsFavicon string, optsIps string, optsOutput data.ReportFormat, defaultPasswordPath string,
+func setUp(optsFavicon string, optsIps string, seleniumServerUrl string, optsOutput data.ReportFormat, defaultPasswordPath string,
 	passwordPath string, loginPath string, htmlTagsNamesPath string) ([]string, []chan string, []module.Module) {
 
 	// parse favicons database
@@ -116,7 +116,7 @@ func setUp(optsFavicon string, optsIps string, optsOutput data.ReportFormat, def
 
 	// create the chains findform -> findid -> bruteforce -> report
 	channels := initChannels(len(ips))
-	chains := initChains(ips, optsOutput, credentials, htmlTagsNames)
+	chains := initChains(ips, optsOutput, credentials, seleniumServerUrl, htmlTagsNames)
 
 	return ips, channels, chains
 }
@@ -152,12 +152,13 @@ func getFavicons(filePath string) (map[string]string) {
 	return favicons
 }
 
-func initChains(ips []string, reportFormat data.ReportFormat, credentials *data.Credentials, htmlTagsNames *data.HtmlSearchValues) ([]module.Module) {
+func initChains(ips []string, reportFormat data.ReportFormat, credentials *data.Credentials, seleniumServerUrl string,
+	htmlTagsNames *data.HtmlSearchValues) ([]module.Module) {
 	chains := make([]module.Module, len(ips))
 
 	// init chains
 	for key, _ := range ips  {
-		firstModule := module.NewScrapModule()
+		firstModule := module.NewScrapModule(seleniumServerUrl)
 		secondModule := module.NewFindFormModule(strconv.Itoa(key), htmlTagsNames)
 		thirdModule := module.NewFaviconModule(credentials)
 		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST, htmlTagsNames.LoginPatterns)

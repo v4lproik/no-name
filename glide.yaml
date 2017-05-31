@@ -7,3 +7,4 @@ import:
 - package: github.com/google/uuid
 - package: github.com/kardianos/osext
 - package: github.com/v4lproik/no-name-domain
+- package: github.com/tebeka/selenium

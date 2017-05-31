@@ -68,6 +68,7 @@ func (m *reportModule) 	Request(flag bool, wi *data.WebInterface) {
 
 	type reportModule struct {
 		Domain string
+		ScreenShot string
 		UrlForm string
 		UrlToSubmit string
 		FaviconMD5Hash string
@@ -84,6 +85,7 @@ func (m *reportModule) 	Request(flag bool, wi *data.WebInterface) {
 
 	info := reportModule{
 		wi.Form.Domain,
+		wi.Form.ScreenShot,
 		wi.Form.UrlForm,
 		wi.Form.UrlToSubmit,
 		wi.Form.FaviconMD5Hash,

@@ -112,26 +112,8 @@ func (w *fakeWebClient) Scrap() (*http.Response, error){
 
 }
 
-func (w *fakeWebClient) ScrapWithParameter(path string, method string, values url.Values) (*http.Response, error){
-	return nil, nil
-}
-
-func (w *fakeWebClient) ScrapWithNoParameter(path string, method string) (*http.Response, error){
-	return nil, nil
-}
-
-func (w *fakeWebClient) CraftUrl(path string) (string){
-	url, _ := url.Parse(path)
-	if url.Host == "" {
-		scheme := w.url.Scheme
-		host := w.url.Path
-
-		return scheme + "://" + host + "/" + path
-	}
-
-	return path
-}
-
-func (w *fakeWebClient) GetUrl() (*url.URL) {
-	return w.url
-}
+func (w *fakeWebClient) ScrapWithParameter(path string, method string, values url.Values) (*http.Response, error){return nil, nil}
+func (w *fakeWebClient) ScrapWithNoParameter(path string, method string) (*http.Response, error){return nil, nil}
+func (w *fakeWebClient) CraftUrlGet(path string, values url.Values) (string){return ""}
+func (w *fakeWebClient) CraftUrlPost(path string) (string){return ""}
+func (w *fakeWebClient) GetUrl() (*url.URL) {return w.url}
