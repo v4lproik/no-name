@@ -1,4 +1,4 @@
-# no-name [![CircleCI](https://circleci.com/gh/Yinkozi/no-name.svg?style=svg&circle-token=a18ffbc369b8ddcf8de823bc2a1eeb628509fcb7)](https://circleci.com/gh/Yinkozi/no-name)
+# no-name [![CircleCI](https://circleci.com/gh/Yinkozi/no-name.svg?style=svg&circle-token=a18ffbc369b8ddcf8de823bc2a1eeb628509fcb7)](https://circleci.com/gh/Yinkozi/no-name) [![codecov](https://codecov.io/gh/v4lproik/no-name/branch/master/graph/badge.svg)](https://codecov.io/gh/v4lproik/no-name)
 
 This program has been designed to extract the information of a web login interface in order to craft a request that submits it.  
 
@@ -111,3 +111,4 @@ sh configure-vulnerable-boxes.sh <DOCKER_IP>
 ```
 go test -cover (go list ./... | grep -v /vendor/)
 ```
+
