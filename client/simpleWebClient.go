@@ -34,7 +34,7 @@ func NewSimpleWebClient(ip string) (*simpleWebClient){
 }
 
 func (w *simpleWebClient) Scrap() (*http.Response, error){
-	res, err := w.client.Get(w.craftUrlGet(w.url.Path, url.Values{}))
+	res, err := w.client.Get(w.CraftUrlGet(w.url.Path, url.Values{}))
 	if err != nil {
 		return nil, err
 	}
@@ -49,13 +49,13 @@ func (w *simpleWebClient) ScrapWithParameter(path string, method string, values 
 
 	switch {
 	case method == "POST" || method == "post" :
-		res, err := w.client.PostForm(w.craftUrlPost(path), values)
+		res, err := w.client.PostForm(w.CraftUrlPost(path), values)
 		if err != nil {
 			return nil, err
 		}
 		return res, nil
 	case method == "GET" || method == "get" :
-		res, err := w.client.Get(w.craftUrlGet(path, values))
+		res, err := w.client.Get(w.CraftUrlGet(path, values))
 		if err != nil {
 			return nil, err
 		}
@@ -71,13 +71,13 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 
 	switch {
 	case method == "POST" || method == "post" :
-		res, err := w.client.PostForm(w.craftUrlPost(path), url.Values{})
+		res, err := w.client.PostForm(w.CraftUrlPost(path), url.Values{})
 		if err != nil {
 			return nil, err
 		}
 		return res, nil
 	case method == "GET" || method == "get" :
-		res, err := w.client.PostForm(w.craftUrlPost(path), url.Values{})
+		res, err := w.client.PostForm(w.CraftUrlPost(path), url.Values{})
 		if err != nil {
 			return nil, err
 		}
@@ -89,7 +89,7 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 	}
 }
 
-func (w *simpleWebClient) craftUrlPost(path string) (string){
+func (w *simpleWebClient) CraftUrlPost(path string) (string){
 	scheme := w.url.Scheme
 	host := w.url.Host
 
@@ -107,7 +107,7 @@ func (w *simpleWebClient) craftUrlPost(path string) (string){
 	return urlToRequest
 }
 
-func (w *simpleWebClient) craftUrlGet(path string, values url.Values) (string){
+func (w *simpleWebClient) CraftUrlGet(path string, values url.Values) (string){
 	scheme := w.url.Scheme
 	host := w.url.Host
 
