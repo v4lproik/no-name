@@ -20,7 +20,7 @@ build:
 	@go build -o ${BINARY} .
 
 run:
-	@if [ -f ${BINARY} ] ; then ./${BINARY} -d db.txt -f ip.txt -o html ; fi
+	@if [ -f ${BINARY} ] ; then ./${BINARY} -f ip.txt -o html ; fi
 
 install:
 	@go install $(shell go list ./... | grep -v /vendor/)

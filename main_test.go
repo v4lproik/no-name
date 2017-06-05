@@ -11,7 +11,7 @@ import (
 // Need to use the same ip for every environment
 func TestNewCredentials(t *testing.T) {
 	//given
-	ips, channels, chains := setUp("db_test.txt","ip_test.txt", "", data.GREPABLE,
+	ips, channels, chains := setUp("ip_test.txt", "", data.GREPABLE,
 		"conf/default-password-web-interface_test.txt", "conf/password_test.txt",
 		"conf/login_test.txt", "conf/html-detection-tags_test.txt")
 

@@ -6,7 +6,6 @@ import (
 	"github.com/v4lproik/no-name/module"
 	"github.com/v4lproik/no-name/util"
 	"strconv"
-	"strings"
 	"github.com/v4lproik/no-name/client"
 	"github.com/v4lproik/no-name/data"
 	"os"
@@ -18,7 +17,6 @@ var rootDir = ""
 
 type Options struct{
 	Ips string `short:"f" long:"filename" description:"File path containing the IPs to scan" required:"true"`
-	Favicons string `short:"d" long:"database" description:"File path containing the md5 computation of the web interface's favicon" required:"true"`
 	Selenium string `short:"s" long:"selenium" description:"Whether you want to use a browser to trigger actions against your targets"`
 	Output string `short:"o" long:"output" description:"Format of the report" required:"true"`
 }
@@ -74,7 +72,7 @@ func main() {
 	}
 
 	// setting up the different objects
-	ips, channels, chains := setUp(opts.Favicons, opts.Ips, opts.Selenium, reportFormat, DEFAULT_PASSWORD,
+	ips, channels, chains := setUp(opts.Ips, opts.Selenium, reportFormat, DEFAULT_PASSWORD,
 		PASSWORD, LOGIN, HTML_TAGS_NAMES)
 
 	// launch the chains
@@ -97,18 +95,14 @@ func launchChains(ips []string, channels []chan string, chains []module.Module) 
 	}
 }
 
-func setUp(optsFavicon string, optsIps string, seleniumServerUrl string, optsOutput data.ReportFormat, defaultPasswordPath string,
+func setUp(optsIps string, seleniumServerUrl string, optsOutput data.ReportFormat, defaultPasswordPath string,
 	passwordPath string, loginPath string, htmlTagsNamesPath string) ([]string, []chan string, []module.Module) {
-
-	// parse favicons database
-	favicons := getFavicons(optsFavicon)
-	showFavicons(favicons)
 
 	// parse ips to scan
 	ips := getIps(optsIps)
 	showIps(ips)
 
-	// parse default password database
+	// parse list of credentials + known web interfaces
 	credentials := data.NewCredentials(defaultPasswordPath, passwordPath, loginPath)
 
 	//parse html tags' names
@@ -133,23 +127,6 @@ func getIps(path string) (ips []string){
 	}
 
 	return lines
-}
-
-func getFavicons(filePath string) (map[string]string) {
-	linesFav, _ := util.ReadLines(filePath)
-
-	favicons := make(map[string]string)
-	for line := range linesFav {
-		tmp := strings.Split(linesFav[line], ":")
-
-		if len(tmp) > 1 {
-			favicons[tmp[0]] = tmp[1]
-		}else{
-			logger.Warningf("Can't process line : <" + linesFav[line] + ">")
-		}
-	}
-
-	return favicons
 }
 
 func initChains(ips []string, reportFormat data.ReportFormat, credentials *data.Credentials, seleniumServerUrl string,
@@ -196,12 +173,6 @@ func initChannels(nb int) ([]chan string){
 	}
 
 	return channels
-}
-
-func showFavicons(favicons map[string]string) {
-	for key, value := range favicons {
-		logger.Infof("key " + key + " value " + value)
-	}
 }
 
 func showIps(ips []string) {
