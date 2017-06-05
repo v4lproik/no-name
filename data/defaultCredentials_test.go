@@ -17,9 +17,9 @@ func TestNewCredentials(t *testing.T) {
 	credentials := NewCredentials(DEFAULT_PASSWORD, PASSWORD, LOGIN)
 
 	// then
-	if credentials.Webinterfaces != nil && len(credentials.Webinterfaces) != 2 &&
-		credentials.Webinterfaces[0].Hash == "hash" &&
-		credentials.Webinterfaces[1].Hash == "hash2" {
+	if credentials.DefaultWebInterfaces != nil && len(credentials.DefaultWebInterfaces) != 2 &&
+		credentials.DefaultWebInterfaces[0].Hash == "hash" &&
+		credentials.DefaultWebInterfaces[1].Hash == "hash2" {
 		t.Errorf("Expected credentials.Webinterfaces to be length 1")
 	}
 

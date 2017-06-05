@@ -10,15 +10,15 @@ import (
 )
 
 type faviconModule struct {
-	credentials *data.Credentials
+	defaultWebInterfaces []data.DefaultWebInterface
 
 	hasher hash.Hash
 
 	next Module
 }
 
-func NewFaviconModule(credentials *data.Credentials) *faviconModule{
-	return &faviconModule{credentials, md5.New(), nil}
+func NewFaviconModule(defaultWebInterfaces []data.DefaultWebInterface) *faviconModule{
+	return &faviconModule{defaultWebInterfaces, md5.New(), nil}
 }
 
 func (m *faviconModule) Request(flag bool, wi *data.WebInterface) {

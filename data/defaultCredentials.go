@@ -10,7 +10,7 @@ import (
 var logger = loggo.GetLogger("credentials")
 
 
-type Webinterface struct {
+type DefaultWebInterface struct {
 	Favicon string
 	Hash string
 	Keywords []string
@@ -18,9 +18,9 @@ type Webinterface struct {
 }
 
 type Credentials struct {
-	Webinterfaces []Webinterface
-	Passwords []string
-	Logins []string
+	DefaultWebInterfaces []DefaultWebInterface
+	Passwords            []string
+	Logins               []string
 }
 
 func NewCredentials(pathDefault string, pathPassword string, pathLogin string) (*Credentials){
@@ -32,7 +32,7 @@ func NewCredentials(pathDefault string, pathPassword string, pathLogin string) (
 	}
 
 	credentials := Credentials{nil, nil, nil}
-	json.Unmarshal(content, &credentials.Webinterfaces)
+	json.Unmarshal(content, &credentials.DefaultWebInterfaces)
 
 	//passwords
 	passwords, err := util.ReadLines(pathPassword)

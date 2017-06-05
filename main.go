@@ -137,7 +137,7 @@ func initChains(ips []string, reportFormat data.ReportFormat, credentials *data.
 	for key, _ := range ips  {
 		firstModule := module.NewScrapModule(seleniumServerUrl)
 		secondModule := module.NewFindFormModule(strconv.Itoa(key), htmlTagsNames)
-		thirdModule := module.NewFaviconModule(credentials)
+		thirdModule := module.NewFaviconModule(credentials.DefaultWebInterfaces)
 		fourthModule := module.NewBruteforceModule(credentials, STOP_AT_FIRST, htmlTagsNames.LoginPatterns)
 		fifthModule := module.NewReportModule(rootDir, reportFormat)
 
