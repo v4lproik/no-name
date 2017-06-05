@@ -21,7 +21,7 @@ func TestNewCredentials(t *testing.T) {
 
 	//then
 	for _, reportPath := range reportPaths {
-		content, _ := util.ReadLines(reportPath)
+		content, _ := util.ReadLines(strings.Split(reportPath, " => ")[1])
 
 		if len(content) < 1 {
 			t.Errorf("The report has not been written, impossible to analyze " + reportPath)

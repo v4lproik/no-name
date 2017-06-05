@@ -92,7 +92,7 @@ func launchChains(ips []string, channels []chan string, chains []module.Module) 
 			webInterface := data.NewWebInterface(client.NewSimpleWebClient(ips[idx]))
 
 			chain.Request(true, webInterface)
-			channel <- webInterface.ReportPath
+			channel <- webInterface.ClientWeb.GetUrl().String() + " => " + webInterface.ReportPath
 		}(channel, idx, chain)
 	}
 }
