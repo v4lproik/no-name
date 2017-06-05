@@ -22,7 +22,8 @@ var _ client.WebClient = (*fakeWebClient)(nil)
 
 var bytesDocWithoutForm, _ = ioutil.ReadAll(strings.NewReader("<html><title>Scientists Stored These Images in DNA—Then Flawlessly Retrieved Them</title></html>"))
 var bytesDocWithFormWithCsrf, _ = ioutil.ReadAll(strings.NewReader(`"<html><form action="url_to_submit" method="POST"><input type="text" name="username" /><input type="password" name="password"><input type="text" name="otherinput" value="random"/><input type="hidden" name="user_token" value="csrftoken" /></form></html>"`))
-var bytesDocWithFormWithoutCsrf, _ = ioutil.ReadAll(strings.NewReader(`"<html><form action="url_to_submit" method="POST"><input type="text" name="username" /><input type="password" name="password"><input type="text" name="otherinput" value="random"/></form></html>"`))
+var bytesDocWithFormWithoutCsrf, _ = ioutil.ReadAll(strings.NewReader(`"<html><head><link rel="icon" type="image/x-icon" href="./favicon.ico"></head><form action="url_to_submit" method="POST"><input type="text" name="username" /><input type="password" name="password"><input type="text" name="otherinput" value="random"/></form></html>"`))
+var bytesFavicon, _ = ioutil.ReadAll(strings.NewReader(`"8@"`))
 var bytesDocWithFormWithoutCsrfWithoutGoodCred, _ = ioutil.ReadAll(strings.NewReader(`"<html>ERROR LOGIN ! The password or the login is \nnot valid... Please \ncheck your credentials !\n<form action="url_to_submit" method="POST"><input type="text" name="username" /><input type="password" name="password"><input type="text" name="otherinput" value="random"/></form></html>"`))
 var bytesDocWithFormWithoutCsrfWithGoodCred, _ = ioutil.ReadAll(strings.NewReader(`"<html>Welcome admin !\n <div>\nYour are now logged on to the super admin page !<br /> Do not give your credentials to anyone else...\n step mother included :)</div></html>"`))
 
@@ -109,6 +110,15 @@ func (w *fakeWebClient) ScrapWithParameter(path string, method string, values ur
 	case w.url.String() == "http://127.0.0.3" && path == "url_to_submit":
 		rw := httptest.NewRecorder()
 		rw.Header().Set("Content-Type", "text/html")
+		rw.Code = 200
+		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrfWithoutGoodCred)
+		httpReponse := rw.Result()
+		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.3", strings.NewReader("request"))
+
+		return httpReponse, nil
+	case w.url.String() == "http://127.0.0.3" && path == "./favicon.ico":
+		rw := httptest.NewRecorder()
+		rw.Header().Set("Content-Type", "image/x-icon")
 		rw.Code = 200
 		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrfWithoutGoodCred)
 		httpReponse := rw.Result()

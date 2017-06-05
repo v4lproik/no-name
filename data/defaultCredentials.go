@@ -11,6 +11,7 @@ var logger = loggo.GetLogger("credentials")
 
 
 type DefaultWebInterface struct {
+	Title string
 	Favicon string
 	Hash string
 	Keywords []string
