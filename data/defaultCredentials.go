@@ -15,7 +15,12 @@ type DefaultWebInterface struct {
 	Favicon string
 	Hash string
 	Keywords []string
-	Credentials []string
+	DefaultCredentials []DefaultCredential
+}
+
+type DefaultCredential struct {
+	Username            string
+	Password            string
 }
 
 type Credentials struct {

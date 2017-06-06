@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"github.com/v4lproik/no-name/util"
 	"strconv"
+	"github.com/v4lproik/no-name-domain"
 )
 
 type bruteforceModule struct {
@@ -44,7 +45,7 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 
 		//start bruteforcing
 		if resWithBadCredentials != "" {
-			found  := false
+			found := false
 			for _, usernameTry := range m.credentials.Logins {
 				for _, passwordTry := range m.credentials.Passwords {
 					// bruteforce ON
@@ -68,8 +69,11 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 					switch {
 					case ratioDiff < 0.92:
 						logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
-						wi.Form.PotentialUsername = usernameTry
-						wi.Form.PotentialPassword = passwordTry
+						wi.Form.PotentialCredentials = append(
+							wi.Form.PotentialCredentials,
+							domain.PotentialCredentials{usernameTry,
+										    passwordTry,
+										    domain.SourceBruteforce})
 						found = true;
 						if m.stopFirstFound {
 							break;
@@ -77,8 +81,11 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 					case ratioDiff >= 0.92 && ratioDiff <= 99:
 						if(util.ContainsRegex(m.htmlSearchValues, resWithPotentialGoodCredentials)) {
 							logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
-							wi.Form.PotentialUsername = usernameTry
-							wi.Form.PotentialPassword = passwordTry
+							wi.Form.PotentialCredentials = append(
+								wi.Form.PotentialCredentials,
+								domain.PotentialCredentials{usernameTry,
+											    passwordTry,
+											    domain.SourceBruteforce})
 							found = true;
 							if m.stopFirstFound {
 								break;

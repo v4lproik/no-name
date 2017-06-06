@@ -228,10 +228,11 @@ func TestNewBruteforceModuleWithNoMissingValue(t *testing.T) {
 	if webClient.CountScrapWithParameter == 1 {
 		t.Errorf("Expected no call to webclient methods are condition is false")
 	}
-	if wi.Form.PotentialUsername != "bug" {
-		t.Errorf("Expected potential username to be bug, not " + wi.Form.PotentialUsername)
+	potentialCredentials := cleanSlice(wi.Form.PotentialCredentials)
+	if potentialCredentials[0].Username != "bug" {
+		t.Errorf("Expected potential username to be bug, not " + wi.Form.PotentialCredentials[0].Username)
 	}
-	if wi.Form.PotentialPassword != "admin" {
-		t.Errorf("Expected potential password to be admin, not " + wi.Form.PotentialPassword)
+	if potentialCredentials[0].Password != "admin" {
+		t.Errorf("Expected potential password to be admin, not " + wi.Form.PotentialCredentials[0].Password)
 	}
 }

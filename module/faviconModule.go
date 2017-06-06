@@ -7,6 +7,8 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"hash"
+	"io/ioutil"
+	"github.com/v4lproik/no-name-domain"
 )
 
 type faviconModule struct {
@@ -38,25 +40,29 @@ func (m *faviconModule) Request(flag bool, wi *data.WebInterface) {
 			wi.Form.FaviconPath = faviconPath
 			logger.Infof("Favicon path found " + faviconPath)
 
-
 			//search by favicon md5 hash
 			res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.FaviconPath, "GET", make(url.Values))
 			if err != nil {
 				logger.Errorf("Favicon url can't be reached ", err.Error())
 			}else{
-				fav, err := util.GetDocument(res)
-				if err != nil {
-					logger.Errorf("Favicon url response can't be transformed into document", err.Error())
-				}
 
-				m.hasher.Write([]byte(fav.Text()))
+				arrayBytes, _ := ioutil.ReadAll(res.Body)
+				m.hasher.Write(arrayBytes)
 				wi.Form.FaviconMD5Hash = hex.EncodeToString(m.hasher.Sum(nil))
 				logger.Infof("MD5 Favicon is : " + wi.Form.FaviconMD5Hash)
 
 				//search if favicon is known in default web interfaces
 				for _, value := range m.defaultWebInterfaces {
-					if(wi.Form.FaviconMD5Hash == value.Favicon){
+					if(wi.Form.FaviconMD5Hash == value.Hash){
 						logger.Infof("Favicon is known in the database with the web interface name of : " + value.Title)
+						for _, pair := range value.DefaultCredentials {
+							wi.Form.PotentialCredentials = append(wi.Form.PotentialCredentials,
+								domain.PotentialCredentials{
+									pair.Username,
+									pair.Password,
+									domain.SourceFavicon})
+						}
+
 						break;
 					}
 				}

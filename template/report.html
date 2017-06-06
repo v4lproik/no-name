@@ -133,24 +133,26 @@
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="4">
-                <h2>Bruteforce information</h2>
+                <h2>Potential credentials information</h2>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th>Information</th>
-                            <th>Value</th>
+                            <th>Login</th>
+                            <th>Password</th>
+                            <th>Source</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>Potential Username</td>
-                            <td>{{.PotentialUsername}}</td>
-                        </tr>
-                        <tr>
-                            <td>PotentialPassword</td>
-                            <td>{{.PotentialPassword}}</td>
-                        </tr>
+                        {{if .ReportModuleCredentials -}}
+                            {{range .ReportModuleCredentials }}
+                                <tr>
+                                    <td>{{.Username}}</td>
+                                    <td>{{.Password}}</td>
+                                    <td>{{.Source}}</td>
+                                </tr>
+                            {{end}}
+                        {{- end}}
                         </tbody>
                     </table>
                 </div>

@@ -11,6 +11,7 @@ import (
 	"github.com/v4lproik/no-name/client"
 	"os"
 	"io/ioutil"
+	"github.com/v4lproik/no-name-domain"
 )
 
 const HTML_TAGS_NAMES_TEST = "conf/html-detection-tags_test.txt"
@@ -23,7 +24,8 @@ var _ client.WebClient = (*fakeWebClient)(nil)
 var bytesDocWithoutForm, _ = ioutil.ReadAll(strings.NewReader("<html><title>Scientists Stored These Images in DNA—Then Flawlessly Retrieved Them</title></html>"))
 var bytesDocWithFormWithCsrf, _ = ioutil.ReadAll(strings.NewReader(`"<html><form action="url_to_submit" method="POST"><input type="text" name="username" /><input type="password" name="password"><input type="text" name="otherinput" value="random"/><input type="hidden" name="user_token" value="csrftoken" /></form></html>"`))
 var bytesDocWithFormWithoutCsrf, _ = ioutil.ReadAll(strings.NewReader(`"<html><head><link rel="icon" type="image/x-icon" href="./favicon.ico"></head><form action="url_to_submit" method="POST"><input type="text" name="username" /><input type="password" name="password"><input type="text" name="otherinput" value="random"/></form></html>"`))
-var bytesFavicon, _ = ioutil.ReadAll(strings.NewReader(`"8@"`))
+var bytesUnknownFavicon, _ = ioutil.ReadAll(strings.NewReader(`"favicontralalalalaal"`))
+var bytesKnownFavicon, _ = ioutil.ReadAll(strings.NewReader(`"superfavicon"`))
 var bytesDocWithFormWithoutCsrfWithoutGoodCred, _ = ioutil.ReadAll(strings.NewReader(`"<html>ERROR LOGIN ! The password or the login is \nnot valid... Please \ncheck your credentials !\n<form action="url_to_submit" method="POST"><input type="text" name="username" /><input type="password" name="password"><input type="text" name="otherinput" value="random"/></form></html>"`))
 var bytesDocWithFormWithoutCsrfWithGoodCred, _ = ioutil.ReadAll(strings.NewReader(`"<html>Welcome admin !\n <div>\nYour are now logged on to the super admin page !<br /> Do not give your credentials to anyone else...\n step mother included :)</div></html>"`))
 
@@ -120,9 +122,18 @@ func (w *fakeWebClient) ScrapWithParameter(path string, method string, values ur
 		rw := httptest.NewRecorder()
 		rw.Header().Set("Content-Type", "image/x-icon")
 		rw.Code = 200
-		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrfWithoutGoodCred)
+		rw.Body = bytes.NewBuffer(bytesUnknownFavicon)
 		httpReponse := rw.Result()
 		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.3", strings.NewReader("request"))
+
+		return httpReponse, nil
+	case w.url.String() == "http://127.0.0.2" && path == "./favicon.ico":
+		rw := httptest.NewRecorder()
+		rw.Header().Set("Content-Type", "image/x-icon")
+		rw.Code = 200
+		rw.Body = bytes.NewBuffer(bytesKnownFavicon)
+		httpReponse := rw.Result()
+		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.2", strings.NewReader("request"))
 
 		return httpReponse, nil
 	default:
@@ -137,3 +148,18 @@ func (w *fakeWebClient) ScrapWithNoParameter(path string, method string) (*http.
 func (w *fakeWebClient) CraftUrlGet(path string, values url.Values) (string){return ""}
 func (w *fakeWebClient) CraftUrlPost(path string) (string){return ""}
 func (w *fakeWebClient) GetUrl() (*url.URL) {return w.url}
+//UTIL
+func cleanSlice(potentialCredentials []domain.PotentialCredentials) []domain.PotentialCredentials {
+	credentialsFilled := make([]domain.PotentialCredentials, 0)
+	for key, _ := range potentialCredentials {
+		if potentialCredentials[key].Username != "" && potentialCredentials[key].Password != "" {
+			credentialsFilled = append(
+				credentialsFilled,
+				domain.PotentialCredentials{potentialCredentials[key].Username,
+							    potentialCredentials[key].Password,
+							    potentialCredentials[key].Source})
+		}
+
+	}
+	return credentialsFilled
+}

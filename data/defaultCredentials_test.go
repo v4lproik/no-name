@@ -17,10 +17,8 @@ func TestNewCredentials(t *testing.T) {
 	credentials := NewCredentials(DEFAULT_PASSWORD, PASSWORD, LOGIN)
 
 	// then
-	if credentials.DefaultWebInterfaces != nil && len(credentials.DefaultWebInterfaces) != 2 &&
-		credentials.DefaultWebInterfaces[0].Hash == "hash" &&
-		credentials.DefaultWebInterfaces[1].Hash == "hash2" {
-		t.Errorf("Expected credentials.Webinterfaces to be length 1")
+	if credentials.DefaultWebInterfaces == nil || len(credentials.DefaultWebInterfaces) != 2 ||
+		credentials.DefaultWebInterfaces[0].Hash != "hash" || credentials.DefaultWebInterfaces[1].Hash != "94ded9c7e35f95e7b3fe36a0269c1e00" {
+		t.Errorf("Expected credentials Webinterfaces to be length 2")
 	}
-
 }

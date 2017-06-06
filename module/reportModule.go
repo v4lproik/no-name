@@ -66,6 +66,11 @@ func createReportFolder() {
 
 func (m *reportModule) 	Request(flag bool, wi *data.WebInterface) {
 
+	type ReportModuleCredential struct {
+		Username string
+		Password string
+		Source string
+	}
 	type reportModule struct {
 		Domain string
 		ScreenShot string
@@ -77,10 +82,21 @@ func (m *reportModule) 	Request(flag bool, wi *data.WebInterface) {
 		OtherArgWithValue map[string]string
 		PasswordArg string
 		UsernameArg string
-		PotentialPassword string
-		PotentialUsername string
+		ReportModuleCredentials []ReportModuleCredential
 		SubmitArg string
 		CsrfArg string
+	}
+
+	reportModuleCredentialsFilled := make([]ReportModuleCredential, 0)
+	for key, _ := range wi.Form.PotentialCredentials {
+		if wi.Form.PotentialCredentials[key].Username != "" && wi.Form.PotentialCredentials[key].Password != "" {
+			reportModuleCredentialsFilled = append(
+				reportModuleCredentialsFilled,
+				ReportModuleCredential{wi.Form.PotentialCredentials[key].Username,
+						       wi.Form.PotentialCredentials[key].Password,
+								wi.Form.PotentialCredentials[key].Source.String()})
+		}
+
 	}
 
 	info := reportModule{
@@ -94,12 +110,10 @@ func (m *reportModule) 	Request(flag bool, wi *data.WebInterface) {
 		wi.Form.OtherArgWithValue,
 		wi.Form.PasswordArg,
 		wi.Form.UsernameArg,
-		wi.Form.PotentialPassword,
-		wi.Form.PotentialUsername,
+		reportModuleCredentialsFilled,
 		wi.Form.SubmitArg,
 		wi.Form.CsrfArg,
 	}
-
 
 	var templates = template.Must(template.ParseFiles(filepath.Join(m.templateDir, "./template/report" + "." + m.format)))
 	err := templates.ExecuteTemplate(m.io, "report" + "." + m.format, info)

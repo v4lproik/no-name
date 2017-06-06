@@ -1,1 +1,1 @@
-{{.Domain}}/{{.PotentialUsername}}/{{.PotentialPassword}}
+{{.Domain}}/{{range .ReportModuleCredentials }}/{{.Username}}/{{.Password}}{{end}}

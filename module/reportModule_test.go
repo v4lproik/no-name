@@ -23,8 +23,8 @@ func TestNewHtmlReport(t *testing.T) {
 
 	//given
 	wi := data.NewWebInterface(nil)
-	wi.Form.PotentialPassword = "password"
-	wi.Form.PotentialUsername = "username"
+	wi.Form.PotentialCredentials[0].Password = "password"
+	wi.Form.PotentialCredentials[0].Username = "username"
 	wi.Form.FaviconPath = "/favicon.icon"
 	wi.Form.CsrfArg = "csrf"
 	wi.Form.UrlForm = "path-to-form.js"
@@ -43,7 +43,7 @@ func TestNewHtmlReport(t *testing.T) {
 
 
 	// then
-	if !strings.Contains(buf.String(), wi.Form.PotentialPassword) || !strings.Contains(buf.String(), wi.Form.PotentialUsername) {
+	if !strings.Contains(buf.String(),wi.Form.PotentialCredentials[0].Password) || !strings.Contains(buf.String(), wi.Form.PotentialCredentials[0].Username) {
 		t.Errorf("Expected PotentialPassword and PotentialUsername to be in the report")
 	}
 	//if !strings.Contains(buf.String(), wi.Form.CsrfArg) || !strings.Contains(buf.String(), wi.Form.MethodSubmitArg) || strings.Contains(buf.String(), wi.Form.SubmitArg) {
@@ -65,8 +65,8 @@ func TestNewTxtReport(t *testing.T) {
 
 	//given
 	wi := data.NewWebInterface(nil)
-	wi.Form.PotentialPassword = "password"
-	wi.Form.PotentialUsername = "username"
+	wi.Form.PotentialCredentials[0].Password = "password"
+	wi.Form.PotentialCredentials[0].Username = "username"
 	var buf bytes.Buffer
 	cwd, _ := os.Getwd()
 	rootDir := cwd[:strings.LastIndex(cwd, "/")]
@@ -76,7 +76,7 @@ func TestNewTxtReport(t *testing.T) {
 	reportPaths = append(reportPaths,  wi.ReportPath)
 
 	// then
-	if !strings.Contains(buf.String(), wi.Form.PotentialPassword) || !strings.Contains(buf.String(), wi.Form.PotentialUsername) {
+	if !strings.Contains(buf.String(), wi.Form.PotentialCredentials[0].Password) || !strings.Contains(buf.String(), wi.Form.PotentialCredentials[0].Username) {
 		t.Errorf("Expected PotentialPassword and PotentialUsername to be in the report")
 	}
 }
@@ -86,8 +86,8 @@ func TestNewTxtReportNameWithoutSpaces(t *testing.T) {
 
 	//given
 	wi := data.NewWebInterface(nil)
-	wi.Form.PotentialPassword = "password"
-	wi.Form.PotentialUsername = "username"
+	wi.Form.PotentialCredentials[0].Password = "password"
+	wi.Form.PotentialCredentials[0].Username = "username"
 	var buf bytes.Buffer
 	cwd, _ := os.Getwd()
 	rootDir := cwd[:strings.LastIndex(cwd, "/")]
