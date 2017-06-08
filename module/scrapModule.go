@@ -17,8 +17,8 @@ type scrapModule struct {
 	next Module
 }
 
-func NewScrapModule(isSeleniumActivated string) *scrapModule{
-	return &scrapModule{isSeleniumActivated, nil}
+func NewScrapModule(seleniumServerUrl string) *scrapModule{
+	return &scrapModule{seleniumServerUrl, nil}
 }
 
 func (m *scrapModule) Request(flag bool, wi *data.WebInterface) {
