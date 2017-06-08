@@ -6,13 +6,26 @@ import (
 	"net/url"
 )
 
+func TestSimpleWebClientWithoutSchemeShouldSetOne(t *testing.T) {
+	t.Log("Call NewSimpleWebClient without scheme should set the 'http' scheme")
+
+	//given
+	domain := "myurl.com"
+
+
+	// when
+	simpleWebClient := NewSimpleWebClient(domain)
+
+	// then
+	assert.Equal(t, "http://myurl.com", simpleWebClient.GetUrl().String(), "The craft url is not the one expected")
+}
 
 func TestNewCraftUrlWithoutSchemeShouldReturnUrlWithScheme(t *testing.T) {
 	t.Log("Call CraftUrlGet without scheme should return url with scheme")
 
 	//given
-	path := "myurl.com"
-	simpleWebClient := NewSimpleWebClient(path)
+	domain := "myurl.com"
+	simpleWebClient := NewSimpleWebClient(domain)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlGet("", url.Values{})
@@ -25,8 +38,8 @@ func TestNewCraftUrlWithSchemeShouldReturnUrlWithScheme(t *testing.T) {
 	t.Log("Call CraftUrlGet with scheme should return url with scheme")
 
 	//given
-	path := "http://myurl.com"
-	simpleWebClient := NewSimpleWebClient(path)
+	domain := "http://myurl.com"
+	simpleWebClient := NewSimpleWebClient(domain)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlGet("", url.Values{})
