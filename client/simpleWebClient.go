@@ -92,8 +92,12 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 func (w *simpleWebClient) CraftUrlPost(path string) (string){
 	scheme := w.url.Scheme
 	host := w.url.Host
-
 	urlToRequest := ""
+
+	if strings.HasPrefix(path, "/") {
+		path = strings.TrimPrefix(path, "/")
+	}
+
 	if strings.HasPrefix(path,"/") {
 		urlToRequest = scheme + "://" + host + path
 	}else{
@@ -110,17 +114,38 @@ func (w *simpleWebClient) CraftUrlPost(path string) (string){
 func (w *simpleWebClient) CraftUrlGet(path string, values url.Values) (string){
 	scheme := w.url.Scheme
 	host := w.url.Host
-
 	urlToRequest := ""
-	if strings.HasPrefix("/", path) {
-		urlToRequest = scheme + "://" + host + path + "?" + values.Encode()
-	}else{
-		if  strings.HasPrefix(path,"http"){
-			urlToRequest = path + "?" + values.Encode()
+
+	if strings.HasPrefix(path, "/") {
+		path = strings.TrimPrefix(path, "/")
+	}
+
+	if len(values) > 0 {
+		if strings.HasSuffix(path, "?") {
+			path = strings.TrimSuffix(path, "?")
+		}
+
+		if strings.HasPrefix("/", path) {
+			urlToRequest = scheme + "://" + host + path + "?" + values.Encode()
 		}else{
-			urlToRequest = scheme + "://" + host + "/" + path + "?" + values.Encode()
+			if  strings.HasPrefix(path,"http"){
+				urlToRequest = path + "?" + values.Encode()
+			}else{
+				urlToRequest = scheme + "://" + host + "/" + path + "?" + values.Encode()
+			}
+		}
+	}else{
+		if strings.HasPrefix("/", path) {
+			urlToRequest = scheme + "://" + host + path
+		}else{
+			if  strings.HasPrefix(path,"http"){
+				urlToRequest = path
+			}else{
+				urlToRequest = scheme + "://" + host + "/" + path
+			}
 		}
 	}
+
 
 	return urlToRequest
 }
