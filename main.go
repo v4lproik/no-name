@@ -17,7 +17,7 @@ var rootDir = ""
 
 type Options struct{
 	Ips string `short:"f" long:"filename" description:"File path containing the IPs to scan" required:"true"`
-	Selenium string `short:"s" long:"selenium" description:"Whether you want to use a browser to trigger actions against your targets"`
+	Selenium string `short:"s" long:"selenium" description:"Url of your standalone/master selenium server"`
 	Output string `short:"o" long:"output" description:"Format of the report" required:"true"`
 }
 
