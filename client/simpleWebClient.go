@@ -10,7 +10,9 @@ import (
 
 type simpleWebClient struct {
 	client *http.Client
-	url    *url.URL
+
+	domain    *url.URL
+	domainResponseCode int
 }
 
 var loggerWeb = loggo.GetLogger("web")
@@ -30,11 +32,14 @@ func NewSimpleWebClient(ip string) (*simpleWebClient){
 		panic(err)
 	}
 
-	return &simpleWebClient{client, url}
+	return &simpleWebClient{client, url, 0}
 }
 
 func (w *simpleWebClient) Scrap() (*http.Response, error){
-	res, err := w.client.Get(w.CraftUrlGet(w.url.Path, url.Values{}))
+	res, err := w.client.Get(w.CraftUrlGet(w.domain.Path, url.Values{}))
+	if res != nil {
+		w.domainResponseCode = res.StatusCode
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -89,9 +94,27 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 	}
 }
 
+func (w *simpleWebClient) BasicAuth(path string, method string, username string, password string) (*http.Response, error){
+
+	if method != "POST" && method != "post" && method != "GET" && method != "get" {
+		loggerWeb.Criticalf("Method " + method + "does not exist.")
+		return nil, nil
+	}
+
+	request, err := http.NewRequest(method, w.CraftUrlPost(path), strings.NewReader(""))
+	request.SetBasicAuth(username, password)
+	res, err := w.client.Do(request)
+	if err != nil {
+		loggerWeb.Criticalf("Error occured while submitting basic auth request.", err.Error())
+		return nil, err
+	}
+	return res, nil
+}
+
+
 func (w *simpleWebClient) CraftUrlPost(path string) (string){
-	scheme := w.url.Scheme
-	host := w.url.Host
+	scheme := w.domain.Scheme
+	host := w.domain.Host
 	urlToRequest := ""
 
 	if strings.HasPrefix(path, "/") {
@@ -112,8 +135,8 @@ func (w *simpleWebClient) CraftUrlPost(path string) (string){
 }
 
 func (w *simpleWebClient) CraftUrlGet(path string, values url.Values) (string){
-	scheme := w.url.Scheme
-	host := w.url.Host
+	scheme := w.domain.Scheme
+	host := w.domain.Host
 	urlToRequest := ""
 
 	if strings.HasPrefix(path, "/") {
@@ -150,6 +173,10 @@ func (w *simpleWebClient) CraftUrlGet(path string, values url.Values) (string){
 	return urlToRequest
 }
 
-func (w *simpleWebClient) GetUrl() (*url.URL) {
-	return w.url
+func (w *simpleWebClient) GetDomain() (*url.URL) {
+	return w.domain
+}
+
+func (w *simpleWebClient) GetDomainHttpCode() (int) {
+	return w.domainResponseCode
 }

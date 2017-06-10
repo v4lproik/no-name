@@ -22,64 +22,85 @@ func NewBruteforceModule(credentials *data.Credentials, stopFirstFound bool, htm
 
 func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 
-	condition :=  wi.ClientWeb != nil &&
-		wi.Doc != nil &&
-		wi.Form != nil &&
-		wi.Form.OtherArgWithValue != nil &&
-		wi.Form.UrlToSubmit != "" &&
-		wi.Form.PasswordArg != "" &&
-		wi.Form.UsernameArg != ""
+	if wi.ClientWeb == nil {
+		logger.Criticalf("No web client has been initialised. Breuteforce can't start")
+		return
+	}
 
 	//TODO: need to create a retry system in case of timeout
-	if condition {
+	if wi.ClientWeb.GetDomainHttpCode() == 401 {
 		logger.Debugf("Start bruteforcing")
 
-		values := m.getHTTPArguments(wi, "TEST", "TEST")
-
-		//get page with errors for comparison purpose
-		resWithBadCredentials, err := m.getErrorCredentialsPage(wi, values)
-		if err != nil {
-			logger.Errorf(err.Error())
-			return
-		}
-
-		//start bruteforcing
-		if resWithBadCredentials != "" {
-			found := false
-			for _, usernameTry := range m.credentials.Logins {
-				for _, passwordTry := range m.credentials.Passwords {
-					// bruteforce ON
-					values := m.getHTTPArguments(wi, usernameTry, passwordTry)
-
-					resWithPotentialGoodCredentials := ""
-					res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
-					if err != nil {
-						logger.Errorf("Url bruteforce can't be reached ", err.Error())
-					}else{
-						doc, err := util.GetDocument(res)
-						if err != nil {
-							logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
-						}
-						resWithPotentialGoodCredentials = doc.Text()
-					}
-
-					ratioDiff := util.GetDiffBetweenTwoPages(resWithBadCredentials, resWithPotentialGoodCredentials)
-					logger.Debugf("Ratio <" + usernameTry + "/" + passwordTry + ">" + strconv.FormatFloat(ratioDiff, 'f', 6, 64))
-
-					switch {
-					case ratioDiff < 0.92:
+		found := false
+		for _, usernameTry := range m.credentials.Logins {
+			for _, passwordTry := range m.credentials.Passwords {
+				res, err := wi.ClientWeb.BasicAuth(wi.ClientWeb.GetDomain().RequestURI(), "GET", usernameTry, passwordTry)
+				if err != nil {
+					logger.Errorf("Url bruteforce can't be reached ", err.Error())
+				}else{
+					logger.Debugf("Ratio <" + usernameTry + "/" + passwordTry + "> with http response " + strconv.Itoa(res.StatusCode))
+					if res != nil && res.StatusCode != 401 {
 						logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
 						wi.Form.PotentialCredentials = append(
 							wi.Form.PotentialCredentials,
 							domain.PotentialCredentials{usernameTry,
 										    passwordTry,
 										    domain.SourceBruteforce})
-						found = true;
-						if m.stopFirstFound {
-							break;
+						found = true
+					}
+				}
+
+				if found && m.stopFirstFound {
+					break;
+				}
+
+			}
+		}
+	}else{
+		condition := wi.Doc != nil &&
+			wi.Form != nil &&
+			wi.Form.OtherArgWithValue != nil &&
+			wi.Form.UrlToSubmit != "" &&
+			wi.Form.PasswordArg != "" &&
+			wi.Form.UsernameArg != ""
+
+		if condition {
+			logger.Debugf("Start bruteforcing")
+
+			values := m.getHTTPArguments(wi, "TEST", "TEST")
+
+			//get page with errors for comparison purpose
+			resWithBadCredentials, err := m.getErrorCredentialsPage(wi, values)
+			if err != nil {
+				logger.Errorf(err.Error())
+				return
+			}
+
+			//start bruteforcing
+			if resWithBadCredentials != "" {
+				found := false
+				for _, usernameTry := range m.credentials.Logins {
+					for _, passwordTry := range m.credentials.Passwords {
+						// bruteforce ON
+						values := m.getHTTPArguments(wi, usernameTry, passwordTry)
+
+						resWithPotentialGoodCredentials := ""
+						res, err := wi.ClientWeb.ScrapWithParameter(wi.Form.UrlToSubmit, wi.Form.MethodSubmitArg, values)
+						if err != nil {
+							logger.Errorf("Url bruteforce can't be reached ", err.Error())
+						}else{
+							doc, err := util.GetDocument(res)
+							if err != nil {
+								logger.Errorf("Data bruteforce can't be transformed into document", err.Error())
+							}
+							resWithPotentialGoodCredentials = doc.Text()
 						}
-					case ratioDiff >= 0.92 && ratioDiff <= 99:
-						if(util.ContainsRegex(m.htmlSearchValues, resWithPotentialGoodCredentials)) {
+
+						ratioDiff := util.GetDiffBetweenTwoPages(resWithBadCredentials, resWithPotentialGoodCredentials)
+						logger.Debugf("Ratio <" + usernameTry + "/" + passwordTry + ">" + strconv.FormatFloat(ratioDiff, 'f', 6, 64))
+
+						switch {
+						case ratioDiff < 0.92:
 							logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
 							wi.Form.PotentialCredentials = append(
 								wi.Form.PotentialCredentials,
@@ -90,16 +111,30 @@ func (m *bruteforceModule) Request(flag bool, wi *data.WebInterface) {
 							if m.stopFirstFound {
 								break;
 							}
+						case ratioDiff >= 0.92 && ratioDiff <= 99:
+							if(util.ContainsRegex(m.htmlSearchValues, resWithPotentialGoodCredentials)) {
+								logger.Infof("Potential credentials: <" + usernameTry + "/" + passwordTry + ">")
+								wi.Form.PotentialCredentials = append(
+									wi.Form.PotentialCredentials,
+									domain.PotentialCredentials{usernameTry,
+												    passwordTry,
+												    domain.SourceBruteforce})
+								found = true;
+								if m.stopFirstFound {
+									break;
+								}
+							}
 						}
 					}
-				}
 
-				if found && m.stopFirstFound {
-					break
+					if found && m.stopFirstFound {
+						break
+					}
 				}
 			}
 		}
 	}
+
 
 	if flag && m.next != nil{
 		m.next.Request(flag, wi)

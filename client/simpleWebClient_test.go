@@ -17,7 +17,7 @@ func TestSimpleWebClientWithoutSchemeShouldSetOne(t *testing.T) {
 	simpleWebClient := NewSimpleWebClient(domain)
 
 	// then
-	assert.Equal(t, "http://myurl.com", simpleWebClient.GetUrl().String(), "The craft url is not the one expected")
+	assert.Equal(t, "http://myurl.com", simpleWebClient.GetDomain().String(), "The craft url is not the one expected")
 }
 
 func TestNewCraftUrlWithoutSchemeShouldReturnUrlWithScheme(t *testing.T) {

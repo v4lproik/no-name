@@ -147,7 +147,10 @@ func (w *fakeWebClient) ScrapWithParameter(path string, method string, values ur
 func (w *fakeWebClient) ScrapWithNoParameter(path string, method string) (*http.Response, error){return nil, nil}
 func (w *fakeWebClient) CraftUrlGet(path string, values url.Values) (string){return ""}
 func (w *fakeWebClient) CraftUrlPost(path string) (string){return ""}
-func (w *fakeWebClient) GetUrl() (*url.URL) {return w.url}
+func (w *fakeWebClient) BasicAuth(method string, path string, username string, password string) (*http.Response, error) {return nil, nil}
+func (w *fakeWebClient) GetDomain() (*url.URL) {return w.url}
+func (w *fakeWebClient) GetDomainHttpCode() (int) {return 200}
+
 //UTIL
 func cleanSlice(potentialCredentials []domain.PotentialCredentials) []domain.PotentialCredentials {
 	credentialsFilled := make([]domain.PotentialCredentials, 0)

@@ -1,4 +1,4 @@
-infoslack:
+web:
   image: "infoslack/dvwa"
   ports:
     - "80:80"
@@ -27,6 +27,13 @@ wordpress:
   ports:
     - "8088:80"
     - "3305:3306"
+
+basic-auth:
+  image: "beevelop/nginx-basic-auth"
+  ports:
+    - "8087:80"
+  links:
+    - "web:web"
 
 mysql:
   image: "mysql/mysql-server"

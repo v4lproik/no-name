@@ -22,7 +22,7 @@ func NewScrapModule(seleniumServerUrl string) *scrapModule{
 }
 
 func (m *scrapModule) Request(flag bool, wi *data.WebInterface) {
-	urlToScrap := wi.ClientWeb.CraftUrlGet(wi.ClientWeb.GetUrl().RequestURI(), url.Values{})
+	urlToScrap := wi.ClientWeb.CraftUrlGet(wi.ClientWeb.GetDomain().RequestURI(), url.Values{})
 
 	res, err := wi.ClientWeb.Scrap()
 	if err != nil {
@@ -45,7 +45,7 @@ func (m *scrapModule) Request(flag bool, wi *data.WebInterface) {
 			wi.Form.ScreenShot = base64.StdEncoding.EncodeToString(data)
 		}
 		if err != nil {
-			logger.Errorf("Can't take a Screenshot for url " + wi.ClientWeb.GetUrl().RequestURI(), err.Error())
+			logger.Errorf("Can't take a Screenshot for url " + wi.ClientWeb.GetDomain().RequestURI(), err.Error())
 		}
 	}
 
@@ -56,7 +56,7 @@ func (m *scrapModule) Request(flag bool, wi *data.WebInterface) {
 	}
 
 	wi.Doc = doc
-	wi.Form.Domain = wi.ClientWeb.GetUrl().Host
+	wi.Form.Domain = wi.ClientWeb.GetDomain().Host
 
 	if flag && m.next != nil{
 		m.next.Request(flag, wi)

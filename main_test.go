@@ -2,9 +2,9 @@ package main
 
 import (
 	"testing"
-	"github.com/v4lproik/no-name/data"
 	"github.com/v4lproik/no-name/util"
 	"strings"
+	"github.com/v4lproik/no-name/data"
 )
 
 // TODO: This is poorly written ! It is a Temporary solution per port...
@@ -55,7 +55,13 @@ func TestNewCredentials(t *testing.T) {
 								t.Error("The credentials cannot be found for the vulnerable box on port 8088")
 							}
 						}else{
-							t.Errorf("A new vulnerable box has been added to the test without being tested " + value)
+							if strings.Contains(value, ":8087/") {
+								if !strings.Contains(value, "foo/bar") {
+									t.Error("The credentials cannot be found for the vulnerable box on port 8087")
+								}
+							}else{
+								t.Errorf("A new vulnerable box has been added to the test without being tested " + value)
+							}
 						}
 					}
 				}
