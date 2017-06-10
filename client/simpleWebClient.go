@@ -117,17 +117,19 @@ func (w *simpleWebClient) CraftUrlPost(path string) (string){
 	host := w.domain.Host
 	urlToRequest := ""
 
+	// host never has "/" in the end
+	// therefore always trim and add manually "/"
 	if strings.HasPrefix(path, "/") {
 		path = strings.TrimPrefix(path, "/")
 	}
 
-	if strings.HasPrefix(path,"/") {
-		urlToRequest = scheme + "://" + host + path
+	if  strings.HasPrefix(path,"http"){
+		urlToRequest = path
 	}else{
-		if  strings.HasPrefix(path,"http"){
-			urlToRequest = path
-		}else{
+		if path != "" {
 			urlToRequest = scheme + "://" + host + "/" + path
+		}else{
+			urlToRequest = scheme + "://" + host
 		}
 	}
 

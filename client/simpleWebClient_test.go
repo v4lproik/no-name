@@ -20,6 +20,54 @@ func TestSimpleWebClientWithoutSchemeShouldSetOne(t *testing.T) {
 	assert.Equal(t, "http://myurl.com", simpleWebClient.GetDomain().String(), "The craft url is not the one expected")
 }
 
+// domain:myurl.com+path:=http://myurl.com
+func TestPostNewCraftUrlWithoutSchemeShouldReturnUrlWithScheme(t *testing.T) {
+	t.Log("Call CraftUrlPost without scheme should return url with scheme")
+
+	//given
+	domain := "myurl.com"
+	path := ""
+	simpleWebClient := NewSimpleWebClient(domain)
+
+	// when
+	craftUrl := simpleWebClient.CraftUrlPost(path)
+
+	// then
+	assert.Equal(t, "http://myurl.com" + path, craftUrl, "The craft url is not the one expected")
+}
+
+// domain:myurl.com+path:http://myurl.com/=http://myurl.com/
+func TestPostNewCraftUrlWithPathEqualsDomainShouldReturnDomainUrl(t *testing.T) {
+	t.Log("Call CraftUrlPost with path equals to domain should return domain")
+
+	//given
+	domain := "myurl.com"
+	path := "http://myurl.com/"
+	simpleWebClient := NewSimpleWebClient(domain)
+
+	// when
+	craftUrl := simpleWebClient.CraftUrlPost(path)
+
+	// then
+	assert.Equal(t, path, craftUrl, "The craft url is not the one expected")
+}
+
+// domain:myurl.com+path:/=http://myurl.com
+func TestPostNewCraftUrlWithSlashShouldReturnUrlWithSchemeAndSlash(t *testing.T) {
+	t.Log("Call CraftUrlPost with slash should return domain")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	simpleWebClient := NewSimpleWebClient(domain)
+
+	// when
+	craftUrl := simpleWebClient.CraftUrlPost(path)
+
+	// then
+	assert.Equal(t, "http://" + domain, craftUrl, "The craft url is not the one expected")
+}
+
 func TestNewCraftUrlWithoutSchemeShouldReturnUrlWithScheme(t *testing.T) {
 	t.Log("Call CraftUrlGet without scheme should return url with scheme")
 
