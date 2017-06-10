@@ -241,3 +241,59 @@ func TestNewBasicAuthWithUnknownMethodShouldReturnError(t *testing.T) {
 	// then
 	assert.Error(t, err, "Method " + method + " does not exist.", "Unknown method should return an error")
 }
+
+func TestNewBasicAuthWithNotValidDomainShouldReturnResponse(t *testing.T) {
+	t.Log("Call basic auth with not valid domain should return null response")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	method := "GET"
+	username := "username"
+	password := "password"
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "http://myurl.com",
+		httpmock.NewErrorResponder(errors.New("connection refused")))
+
+	res, err := simpleWebClient.BasicAuth(path, method, username, password)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.Nil(t, res)
+	assert.Error(t, err, "connection refused", "Expected error")
+
+}
+
+func TestNewBasicAuthWithValidDomainShouldReturnResponse(t *testing.T) {
+	t.Log("Call basic auth with valid domain should return response")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	method := "GET"
+	username := "username"
+	password := "password"
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "http://myurl.com",
+		httpmock.NewStringResponder(401, ""))
+
+	res, _ := simpleWebClient.BasicAuth(path, method, username, password)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.NotNil(t, res)
+}
