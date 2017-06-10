@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"net/http/cookiejar"
 	"strings"
+	"errors"
 )
 
 type simpleWebClient struct {
@@ -97,8 +98,9 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 func (w *simpleWebClient) BasicAuth(path string, method string, username string, password string) (*http.Response, error){
 
 	if method != "POST" && method != "post" && method != "GET" && method != "get" {
-		loggerWeb.Criticalf("Method " + method + "does not exist.")
-		return nil, nil
+		error := "Method " + method + " does not exist."
+		loggerWeb.Criticalf(error)
+		return nil, errors.New(error)
 	}
 
 	request, err := http.NewRequest(method, w.CraftUrlPost(path), strings.NewReader(""))

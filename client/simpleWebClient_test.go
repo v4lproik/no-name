@@ -159,3 +159,21 @@ func TestNewCraftUrlWithUrlSlashAndPathSlashShouldReturnUrlWithOneSlash(t *testi
 	// then
 	assert.Equal(t, "http://mydomain.com/mypath?parameter=parametervalue", craftUrl, "The craft url is not the one expected")
 }
+
+func TestNewBasicAuthWithUnknownMethodShouldReturnError(t *testing.T) {
+	t.Log("Call basic auth with unknown method should return error")
+
+	//given
+	domain := "mydomain.com/"
+	path := "/mypath?"
+	method := "ZOP"
+	username := "username"
+	password := "password"
+	simpleWebClient := NewSimpleWebClient(domain)
+
+	// when
+	_, err := simpleWebClient.BasicAuth(path, method, username, password)
+
+	// then
+	assert.Error(t, err, "Method " + method + " does not exist.", "Unknown method should return an error")
+}
