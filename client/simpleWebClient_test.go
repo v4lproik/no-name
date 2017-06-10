@@ -297,3 +297,144 @@ func TestNewBasicAuthWithValidDomainShouldReturnResponse(t *testing.T) {
 	// then
 	assert.NotNil(t, res)
 }
+
+func TestNewScrapWithParameterWithValidMethodGetShouldReturnResponse(t *testing.T) {
+	t.Log("Call scrap with parameter with valid method get should return response")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	method := "GET"
+	values := url.Values{}
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "http://myurl.com",
+		httpmock.NewStringResponder(200, ""))
+
+	res, _ := simpleWebClient.ScrapWithParameter(path, method, values)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.NotNil(t, res)
+}
+
+func TestNewScrapWithParameterWithValidMethodPostShouldReturnResponse(t *testing.T) {
+	t.Log("Call scrap with parameter with valid method post should return response")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	method := "POST"
+	values := url.Values{}
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("POST", "http://myurl.com",
+		httpmock.NewStringResponder(200, ""))
+
+	res, _ := simpleWebClient.ScrapWithParameter(path, method, values)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.NotNil(t, res)
+}
+
+func TestNewScrapWithParameterWithNotValidMethodShouldReturnError(t *testing.T) {
+	t.Log("Call scrap with parameter with not valid method should return error")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	method := "ZOP"
+	values := url.Values{}
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	res, err := simpleWebClient.ScrapWithParameter(path, method, values)
+
+
+	// then
+	assert.Nil(t, res)
+	assert.Error(t, err)
+}
+
+func TestNewScrapWithNoParameterWithValidMethodGetShouldReturnResponse(t *testing.T) {
+	t.Log("Call scrap with no parameter with valid method get should return response")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	method := "GET"
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("POST", "http://myurl.com",
+		httpmock.NewStringResponder(200, ""))
+
+	res, _ := simpleWebClient.ScrapWithNoParameter(path, method)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.NotNil(t, res)
+}
+
+func TestNewScrapWithNoParameterWithValidMethodPostShouldReturnResponse(t *testing.T) {
+	t.Log("Call scrap with no parameter with valid method post should return response")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	method := "POST"
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("POST", "http://myurl.com",
+		httpmock.NewStringResponder(200, ""))
+
+	res, _ := simpleWebClient.ScrapWithNoParameter(path, method)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.NotNil(t, res)
+}
+
+func TestNewScrapWithNoParameterWithNotValidMethodShouldReturnError(t *testing.T) {
+	t.Log("Call scrap with no parameter with not valid method should return error")
+
+	//given
+	domain := "myurl.com"
+	path := "/"
+	method := "ZOP"
+	values := url.Values{}
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	res, err := simpleWebClient.ScrapWithParameter(path, method, values)
+
+
+	// then
+	assert.Nil(t, res)
+	assert.Error(t, err)
+}
+

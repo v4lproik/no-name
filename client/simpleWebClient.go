@@ -61,19 +61,22 @@ func (w *simpleWebClient) ScrapWithParameter(path string, method string, values 
 	case method == "POST" || method == "post" :
 		res, err := w.client.PostForm(w.CraftUrlPost(path), values)
 		if err != nil {
+			loggerWeb.Errorf("Error occured while scrapping with parameters", err.Error())
 			return nil, err
 		}
 		return res, nil
 	case method == "GET" || method == "get" :
 		res, err := w.client.Get(w.CraftUrlGet(path, values))
 		if err != nil {
+			loggerWeb.Errorf("Error occured while scrapping with parameters", err.Error())
 			return nil, err
 		}
 
 		return res, nil
 	default:
-		loggerWeb.Criticalf("Method " + method + "does not exist.")
-		return nil, nil
+		error := "Method " + method + "does not exist."
+		loggerWeb.Errorf(error)
+		return nil, errors.New(error)
 	}
 }
 
@@ -83,19 +86,22 @@ func (w *simpleWebClient) ScrapWithNoParameter(path string, method string) (*htt
 	case method == "POST" || method == "post" :
 		res, err := w.client.PostForm(w.CraftUrlPost(path), url.Values{})
 		if err != nil {
+			loggerWeb.Errorf("Error occured while scrapping with parameters", err.Error())
 			return nil, err
 		}
 		return res, nil
 	case method == "GET" || method == "get" :
 		res, err := w.client.PostForm(w.CraftUrlPost(path), url.Values{})
 		if err != nil {
+			loggerWeb.Errorf("Error occured while scrapping with parameters", err.Error())
 			return nil, err
 		}
 
 		return res, nil
 	default:
-		loggerWeb.Criticalf("Method " + method + "does not exist.")
-		return nil, nil
+		error := "Method " + method + "does not exist."
+		loggerWeb.Errorf(error)
+		return nil, errors.New(error)
 	}
 }
 
