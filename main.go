@@ -9,6 +9,7 @@ import (
 	"github.com/v4lproik/no-name/client"
 	"github.com/v4lproik/no-name/data"
 	"os"
+	"net/http"
 )
 
 var logger = loggo.GetLogger("main")
@@ -87,7 +88,7 @@ func launchChains(ips []string, channels []chan string, chains []module.Module) 
 	for idx, chain := range chains {
 		channel := channels[idx]
 		go func(channel chan string, idx int, chain module.Module) {
-			webInterface := data.NewWebInterface(client.NewSimpleWebClient(ips[idx]))
+			webInterface := data.NewWebInterface(client.NewSimpleWebClient(ips[idx], http.DefaultClient))
 
 			chain.Request(true, webInterface)
 			channel <- webInterface.ClientWeb.GetDomain().String() + " => " + webInterface.ReportPath

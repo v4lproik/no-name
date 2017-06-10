@@ -4,7 +4,22 @@ import (
 	"testing"
 	"github.com/stretchr/testify/assert"
 	"net/url"
+	"net/http"
+	"github.com/jarcoal/httpmock"
+	"errors"
 )
+
+var HTTPCLIENT = http.DefaultClient
+
+func TestSimpleWebClientWithoutHttpClientShouldReturnError(t *testing.T) {
+	t.Log("Call NewSimpleWebClient without http client should panic")
+
+	//given
+	domain := "myurl.com"
+
+	// then
+	assert.PanicsWithValue(t, "HttpClient should be initiated", func(){NewSimpleWebClient(domain, nil)})
+}
 
 func TestSimpleWebClientWithoutSchemeShouldSetOne(t *testing.T) {
 	t.Log("Call NewSimpleWebClient without scheme should set the 'http' scheme")
@@ -14,10 +29,59 @@ func TestSimpleWebClientWithoutSchemeShouldSetOne(t *testing.T) {
 
 
 	// when
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// then
 	assert.Equal(t, "http://myurl.com", simpleWebClient.GetDomain().String(), "The craft url is not the one expected")
+}
+
+// domain:myurl.com+path:=http://myurl.com
+func TestScrapWithValidDomain(t *testing.T) {
+	t.Log("Call scrap with a valid domain should return http response")
+
+	//given
+	domain := "myurl.com"
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "http://myurl.com",
+		httpmock.NewStringResponder(200, ""))
+
+	res, _ := simpleWebClient.Scrap()
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.NotNil(t, res)
+	assert.Equal(t, 200, simpleWebClient.domainResponseCode)
+}
+
+func TestScrapWithNotValidDomain(t *testing.T) {
+	t.Log("Call scrap with not a valid domain should return nil http response")
+
+	//given
+	domain := "myurl.com"
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "http://myurl.com",
+		httpmock.NewErrorResponder(errors.New("connection refused")))
+
+	res, err := simpleWebClient.Scrap()
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.Nil(t, res)
+	assert.Error(t, err)
 }
 
 // domain:myurl.com+path:=http://myurl.com
@@ -27,7 +91,7 @@ func TestPostNewCraftUrlWithoutSchemeShouldReturnUrlWithScheme(t *testing.T) {
 	//given
 	domain := "myurl.com"
 	path := ""
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlPost(path)
@@ -43,7 +107,7 @@ func TestPostNewCraftUrlWithPathEqualsDomainShouldReturnDomainUrl(t *testing.T) 
 	//given
 	domain := "myurl.com"
 	path := "http://myurl.com/"
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlPost(path)
@@ -59,7 +123,7 @@ func TestPostNewCraftUrlWithSlashShouldReturnUrlWithSchemeAndSlash(t *testing.T)
 	//given
 	domain := "myurl.com"
 	path := "/"
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlPost(path)
@@ -73,7 +137,7 @@ func TestNewCraftUrlWithoutSchemeShouldReturnUrlWithScheme(t *testing.T) {
 
 	//given
 	domain := "myurl.com"
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlGet("", url.Values{})
@@ -87,7 +151,7 @@ func TestNewCraftUrlWithSchemeShouldReturnUrlWithScheme(t *testing.T) {
 
 	//given
 	domain := "http://myurl.com"
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlGet("", url.Values{})
@@ -102,7 +166,7 @@ func TestNewCraftUrlWithPathShouldReturnUrlWithPath(t *testing.T) {
 	//given
 	domain := "mydomain.com"
 	path := "mypath"
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlGet(path, url.Values{})
@@ -118,7 +182,7 @@ func TestNewCraftUrlWithPathAndParameterShouldReturnUrlWithPathAndParameter(t *t
 	domain := "mydomain.com"
 	path := "mypath"
 	parameter := url.Values{"parameter": []string{"parametervalue"}}
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlGet(path, parameter)
@@ -134,7 +198,7 @@ func TestNewCraftUrlWithAQuestionMarkShouldReturnUrlWithOneQuestionMark(t *testi
 	domain := "mydomain.com"
 	path := "mypath?"
 	parameter := url.Values{"parameter": []string{"parametervalue"}}
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlGet(path, parameter)
@@ -151,7 +215,7 @@ func TestNewCraftUrlWithUrlSlashAndPathSlashShouldReturnUrlWithOneSlash(t *testi
 	domain := "mydomain.com/"
 	path := "/mypath?"
 	parameter := url.Values{"parameter": []string{"parametervalue"}}
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	craftUrl := simpleWebClient.CraftUrlGet(path, parameter)
@@ -169,7 +233,7 @@ func TestNewBasicAuthWithUnknownMethodShouldReturnError(t *testing.T) {
 	method := "ZOP"
 	username := "username"
 	password := "password"
-	simpleWebClient := NewSimpleWebClient(domain)
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
 	_, err := simpleWebClient.BasicAuth(path, method, username, password)

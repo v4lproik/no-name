@@ -18,8 +18,11 @@ type simpleWebClient struct {
 
 var loggerWeb = loggo.GetLogger("web")
 
-func NewSimpleWebClient(ip string) (*simpleWebClient){
-	client := http.DefaultClient
+func NewSimpleWebClient(ip string, client *http.Client) (*simpleWebClient){
+	if client == nil {
+		panic("HttpClient should be initiated")
+	}
+
 	cookieJar, _ := cookiejar.New(nil)
 	client.Jar = cookieJar
 
@@ -42,6 +45,7 @@ func (w *simpleWebClient) Scrap() (*http.Response, error){
 		w.domainResponseCode = res.StatusCode
 	}
 	if err != nil {
+		loggerWeb.Errorf("Error while scraping", err.Error())
 		return nil, err
 	}
 
