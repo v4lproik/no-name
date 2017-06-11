@@ -1,8 +1,5 @@
 #!/bin/sh
 
-#init credentials for webgoat
-curl --retry 3 --retry-delay 5 "http://$1:8080/WebGoat/register.mvc" -H "Origin: http://$1:8080" -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-GB,da-DK;q=0.8,da;q=0.6,fr-CA;q=0.4,fr;q=0.2,en-US;q=0.2,en;q=0.2' -H 'Upgrade-Insecure-Requests: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' -H 'Cache-Control: max-age=0' -H "Referer: http://$1:8080/WebGoat/register.mvc" -H 'Connection: keep-alive' --data 'username=admintest&password=admintest&matchingPassword=admintest&agree=agree' --compressed
-
 #init database for citizenstig
 curl --retry 3 --retry-delay 5 "http://$1:8081/set-up-database.php"
 

@@ -29,39 +29,32 @@ func TestNewCredentials(t *testing.T) {
 		}
 		value := content[0]
 
-		//if its port webgoat 8080
-		if strings.Contains(value, ":8080/") {
-			if !strings.Contains(value, "admintest/admintest") {
-				t.Error("The credentials has not been found for the vulnerable box on port 8080")
+		if strings.Contains(value, ":80/") {
+			if !strings.Contains(value, "admin/password") {
+				t.Error("The credentials cannot be found for the vulnerable box on port 80")
 			}
-		}else{
-			if strings.Contains(value, ":80/") {
-				if !strings.Contains(value, "admin/password") {
-					t.Error("The credentials cannot be found for the vulnerable box on port 80")
+		} else {
+			if strings.Contains(value, ":8081/") {
+				if !strings.Contains(value, "/") {
+					t.Error("The credentials cannot be found for the vulnerable box on port 8081")
 				}
-			} else {
-				if strings.Contains(value, ":8081/") {
-					if !strings.Contains(value, "/") {
-						t.Error("The credentials cannot be found for the vulnerable box on port 8081")
+			}else{
+				if strings.Contains(value, ":8899/") {
+					if !strings.Contains(value, "user1/user1_pass") {
+						t.Error("The credentials cannot be found for the vulnerable box on port 8899")
 					}
-				}else{
-					if strings.Contains(value, ":8899/") {
-						if !strings.Contains(value, "user1/user1_pass") {
-							t.Error("The credentials cannot be found for the vulnerable box on port 8899")
+				}else {
+					if strings.Contains(value, ":8088/") {
+						if !strings.Contains(value, "test/test") {
+							t.Error("The credentials cannot be found for the vulnerable box on port 8088")
 						}
-					}else {
-						if strings.Contains(value, ":8088/") {
-							if !strings.Contains(value, "test/test") {
-								t.Error("The credentials cannot be found for the vulnerable box on port 8088")
+					}else{
+						if strings.Contains(value, ":8087/") {
+							if !strings.Contains(value, "foo/bar") {
+								t.Error("The credentials cannot be found for the vulnerable box on port 8087")
 							}
 						}else{
-							if strings.Contains(value, ":8087/") {
-								if !strings.Contains(value, "foo/bar") {
-									t.Error("The credentials cannot be found for the vulnerable box on port 8087")
-								}
-							}else{
-								t.Errorf("A new vulnerable box has been added to the test without being tested " + value)
-							}
+							t.Errorf("A new vulnerable box has been added to the test without being tested " + value)
 						}
 					}
 				}

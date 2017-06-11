@@ -12,11 +12,6 @@ citizenstig:
   environment:
     - MYSQL_PASS=p@ssw0rd
 
-webgoat:
-  image: "webgoat/webgoat-8.0"
-  ports:
-    - "8080:8080"
-
 open-ninja:
   image: "opendns/security-ninjas"
   ports:
