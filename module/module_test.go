@@ -108,6 +108,17 @@ func (w *fakeWebClient) Scrap() (*http.Response, error){
 		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.5", strings.NewReader("Try again"))
 
 		return httpReponse, nil
+
+	case "http://127.0.0.6":
+		rw := httptest.NewRecorder()
+		rw.Header().Set("Content-Type", "text/html")
+		rw.Code = 401
+		w.domainResponseCode = 401
+		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrf)
+		httpReponse := rw.Result()
+		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.6", strings.NewReader("Try again"))
+
+		return httpReponse, nil
 	default:
 		return nil, nil
 	}
@@ -185,15 +196,9 @@ func (w *fakeWebClient) BasicAuth(path string, method string, username string, p
 		w.CountBasicAuthWithParameter += 1
 		return httpReponse, nil
 	case w.url.String() == "http://127.0.0.6":
-		rw := httptest.NewRecorder()
-		rw.Header().Set("Content-Type", "text/html")
-		rw.Code = 504
-		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrfWithGoodCred)
-		httpReponse := rw.Result()
-		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.5", strings.NewReader("Timeout"))
 
 		w.CountBasicAuthWithParameter += 1
-		return httpReponse, errors.New("timeout")
+		return nil, errors.New("timeout")
 	default:
 		w.CountBasicAuthWithParameter += 1
 		return nil, nil

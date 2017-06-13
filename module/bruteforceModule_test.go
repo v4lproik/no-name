@@ -5,6 +5,7 @@ import (
 	"github.com/v4lproik/no-name/data"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
+	"strconv"
 )
 
 func TestNewBruteforceModuleWithUsernameArgMissingFormValues(t *testing.T) {
@@ -257,11 +258,11 @@ func TestNewBruteforceModuleWithNoMissingValueAndCode401ShouldReturnResponse(t *
 	NewBruteforceModule(credentials, true, htmlTagsNames.LoginPatterns).Request(false, wi)
 
 	//then
-	if webClient.CountScrapWithParameter == 1 {
-		t.Errorf("Expected one call to webclient methods are condition is false")
+	if webClient.CountScrapWithParameter != 0 {
+		t.Errorf("Expected one call to webclient methods are condition is false, not <" + strconv.Itoa(webClient.CountScrapWithParameter) + ">")
 	}
-	if webClient.CountBasicAuthWithParameter == 2 {
-		t.Errorf("Expected one call to basic auth")
+	if webClient.CountBasicAuthWithParameter != 17 {
+		t.Errorf("Expected one call to basic auth <" + strconv.Itoa(webClient.CountBasicAuthWithParameter) + ">")
 	}
 	potentialCredentials := cleanSlice(wi.Form.PotentialCredentials)
 	if potentialCredentials[0].Username != "admin" {
@@ -292,7 +293,7 @@ func TestNewBruteforceModuleWithNoMissingValueAndCode401AndTimeoutShouldReturnEr
 	NewBruteforceModule(credentials, true, htmlTagsNames.LoginPatterns).Request(false, wi)
 
 	//then
-	if webClient.CountBasicAuthWithParameter == 1 {
-		t.Errorf("Expected one call to basic auth")
+	if webClient.CountBasicAuthWithParameter != 80 {
+		t.Errorf("Expected 80 call to basic auth, not <" + strconv.Itoa(webClient.CountBasicAuthWithParameter) + ">")
 	}
 }
