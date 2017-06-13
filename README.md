@@ -1,18 +1,17 @@
 # no-name [![CircleCI](https://circleci.com/gh/v4lproik/no-name.svg?style=svg&circle-token=a18ffbc369b8ddcf8de823bc2a1eeb628509fcb7)](https://circleci.com/gh/Yinkozi/no-name) [![codecov](https://codecov.io/gh/v4lproik/no-name/branch/master/graph/badge.svg)](https://codecov.io/gh/v4lproik/no-name)
 
-This program has been designed to extract the information of a web login interface in order to craft a request that submits it.  
-
-This project has been booted as it can be useful - especially during an internal pentest assessment, after extracting a list of web servers - to find a pair of credentials that allows you to get logged in as a privileged user.
+This Golang program aims to help pentesters during an internal penetration test. It scans the web interfaces passed in parameter detecting the authentication form and then tries to find a valid pair of credentials.
 
 ## How does it work ?
 
 Several modules have been implemented and the workflow of the program looks like this :
+- Load the configuration files (pass/login dic, general conf...)
 - Parse the ip addresses passed in parameter
-- Load the configuration files of the program
 - Scan the web interface and extract the web login form information
-- Try to detect the type of web interface (wordpress, joomla, ...) through different patterns (feedbacks, favicons...)
+- Detect the type of web interface it is dealing with (wordpress, joomla, ...) through different patterns (feedbacks, favicons...)
 - Search for default credentials in the database if the web interface has been recognised
-- Bruteforce the form with a list of credentials
+- Extract the authentication form information OR basic authentication headers
+- Start bruteforcing
 - Create a report file
 
 ## Environment Installation
@@ -24,12 +23,12 @@ Several modules have been implemented and the workflow of the program looks like
 git clone https://github.com/v4lproik/no-name
 cd no-name
 glide install
-go build main.go
+make buildandrun
 ```
 
 ## Run
 ```
-./main --help
+./no-name --help
 ```
 
 ## Examples
@@ -98,17 +97,19 @@ Below, some report screenshots
 ![Screenshot](screenshots/form-info.png)
 ![Screenshot](screenshots/bruteforce-info.png)
 
+_NB:_ You can activate the screenshot feature if you have a selenium server running by using the flag `-s http://localhost:4444/wb/hub`
+
 ## Test
 1 - Download & Set up vulnerable boxes  
 ```
 docker-compose up -d
 ```
-2 - Configure vulnerable boxes' databases - You may want to change the ip address inside this file so it matches your docker ip address
+2 - Configure vulnerable boxes - Pass your docker ip as parameter
 ```
 sh configure-vulnerable-boxes.sh <DOCKER_IP>
 ```
-3 - Launch tests  
+3 - Launch tests - A report coverage will be created at the root of the project with name coverage.txt
 ```
-go test -cover (go list ./... | grep -v /vendor/)
+sh test.sh
 ```
 
