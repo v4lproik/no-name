@@ -29,10 +29,10 @@ func init()  {
 }
 
 const STOP_AT_FIRST = true
-const LOGIN = "conf/login.txt"
-const PASSWORD = "conf/password.txt"
-const DEFAULT_PASSWORD = "conf/default-password-web-interface.txt"
-const HTML_TAGS_NAMES = "conf/html-detection-tags.txt"
+const LOGIN = "static/conf/login.txt"
+const PASSWORD = "static/conf/password.txt"
+const DEFAULT_PASSWORD = "static/conf/default-password-web-interface.txt"
+const HTML_TAGS_NAMES = "static/conf/html-detection-tags.txt"
 
 func banner() {
 	var banner = `

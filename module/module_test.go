@@ -14,10 +14,10 @@ import (
 	"github.com/v4lproik/no-name-domain"
 )
 
-const HTML_TAGS_NAMES_TEST = "conf/html-detection-tags_test.txt"
-const LOGIN_TEST = "conf/login_test.txt"
-const PASSWORD_TEST = "conf/password_test.txt"
-const DEFAULT_PASSWORD_TEST = "conf/default-password-web-interface_test.txt"
+const HTML_TAGS_NAMES_TEST = "static/conf/html-detection-tags_test.txt"
+const LOGIN_TEST = "static/conf/login_test.txt"
+const PASSWORD_TEST = "static/conf/password_test.txt"
+const DEFAULT_PASSWORD_TEST = "static/conf/default-password-web-interface_test.txt"
 var CWD, _ = os.Getwd()
 var _ client.WebClient = (*fakeWebClient)(nil)
 

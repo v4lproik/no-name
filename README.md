@@ -3,7 +3,6 @@
 This Golang program aims to help pentesters during an internal penetration test. It scans the web interfaces passed in parameter detecting the authentication form and then tries to find a valid pair of credentials.
 
 ## How does it work ?
-
 Several modules have been implemented and the workflow of the program looks like this :
 - Load the configuration files (pass/login dic, general conf...)
 - Parse the ip addresses passed in parameter
@@ -93,9 +92,9 @@ make buildandrun
 ## Reporting
 Below, some report screenshots
 
-![Screenshot](screenshots/overview-info.png)
-![Screenshot](screenshots/form-info.png)
-![Screenshot](screenshots/bruteforce-info.png)
+![Screenshot](static/screenshot/overview-info.png)
+![Screenshot](static/screenshot/form-info.png)
+![Screenshot](static/screenshot/bruteforce-info.png)
 
 _NB:_ You can activate the screenshot feature if you have a selenium server running by using the flag `-s http://localhost:4444/wb/hub`
 
@@ -106,10 +105,10 @@ docker-compose up -d
 ```
 2 - Configure vulnerable boxes - Pass your docker ip as parameter
 ```
-sh configure-vulnerable-boxes.sh <DOCKER_IP>
+sh deployment_script/configure-vulnerable-boxes.sh <DOCKER_IP>
 ```
 3 - Launch tests - A report coverage will be created at the root of the project with name coverage.txt
 ```
-sh test.sh
+make test
 ```
 
