@@ -115,7 +115,7 @@ func (m *reportModule) 	Request(flag bool, wi *data.WebInterface) {
 		wi.Form.CsrfArg,
 	}
 
-	var templates = template.Must(template.ParseFiles(filepath.Join(m.templateDir, "./template/report" + "." + m.format)))
+	var templates = template.Must(template.ParseFiles(filepath.Join(m.templateDir, "./static/report" + "." + m.format)))
 	err := templates.ExecuteTemplate(m.io, "report" + "." + m.format, info)
 	if err != nil {
 		logger.Criticalf("Cannot Get View ", err)
