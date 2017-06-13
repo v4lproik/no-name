@@ -44,7 +44,9 @@ type fakeWebClient struct{
 	client *http.Client
 	url    *url.URL
 
+	domainResponseCode int
 	CountScrapWithParameter int
+	CountBasicAuthWithParameter int
 }
 func NewFakeWebClient(ip string) (*fakeWebClient){
 	if !strings.HasPrefix(ip, "http://") && !strings.HasPrefix(ip, "https://") {
@@ -56,7 +58,7 @@ func NewFakeWebClient(ip string) (*fakeWebClient){
 		panic(err)
 	}
 
-	return &fakeWebClient{nil, url, 0}
+	return &fakeWebClient{nil, url, 0, 0, 0}
 }
 
 func (w *fakeWebClient) Scrap() (*http.Response, error){
@@ -67,15 +69,18 @@ func (w *fakeWebClient) Scrap() (*http.Response, error){
 		rw := httptest.NewRecorder()
 		rw.Header().Set("Content-Type", "text/html")
 		rw.Code = 200
+		w.domainResponseCode = 200
 		rw.Body = bytes.NewBuffer(bytesDocWithoutForm)
 		httpReponse := rw.Result()
 		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.1", strings.NewReader("request"))
+
 
 		return httpReponse, nil
 	case "http://127.0.0.2":
 		rw := httptest.NewRecorder()
 		rw.Header().Set("Content-Type", "text/html")
 		rw.Code = 200
+		w.domainResponseCode = 200
 		rw.Body = bytes.NewBuffer(bytesDocWithFormWithCsrf)
 		httpReponse := rw.Result()
 		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.2", strings.NewReader("request"))
@@ -86,9 +91,21 @@ func (w *fakeWebClient) Scrap() (*http.Response, error){
 		rw := httptest.NewRecorder()
 		rw.Header().Set("Content-Type", "text/html")
 		rw.Code = 200
+		w.domainResponseCode = 200
 		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrf)
 		httpReponse := rw.Result()
 		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.3", strings.NewReader("request"))
+
+		return httpReponse, nil
+
+	case "http://127.0.0.5":
+		rw := httptest.NewRecorder()
+		rw.Header().Set("Content-Type", "text/html")
+		rw.Code = 401
+		w.domainResponseCode = 401
+		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrf)
+		httpReponse := rw.Result()
+		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.5", strings.NewReader("Try again"))
 
 		return httpReponse, nil
 	default:
@@ -137,19 +154,55 @@ func (w *fakeWebClient) ScrapWithParameter(path string, method string, values ur
 
 		return httpReponse, nil
 	default:
+		w.CountScrapWithParameter += 1
 		return nil, nil
 	}
-
-	w.CountScrapWithParameter += 1
-	return nil, nil
 }
 
 func (w *fakeWebClient) ScrapWithNoParameter(path string, method string) (*http.Response, error){return nil, nil}
 func (w *fakeWebClient) CraftUrlGet(path string, values url.Values) (string){return ""}
 func (w *fakeWebClient) CraftUrlPost(path string) (string){return ""}
-func (w *fakeWebClient) BasicAuth(method string, path string, username string, password string) (*http.Response, error) {return nil, nil}
+func (w *fakeWebClient) BasicAuth(path string, method string, username string, password string) (*http.Response, error) {
+	switch {
+	case w.url.String() == "http://127.0.0.5" && path == "/" && username == "admin" && password == "admin":
+		rw := httptest.NewRecorder()
+		rw.Header().Set("Content-Type", "text/html")
+		rw.Code = 200
+		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrfWithGoodCred)
+		httpReponse := rw.Result()
+		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.5", strings.NewReader("Granted !"))
+
+		w.CountBasicAuthWithParameter += 1
+		return httpReponse, nil
+	case w.url.String() == "http://127.0.0.5":
+		rw := httptest.NewRecorder()
+		rw.Header().Set("Content-Type", "text/html")
+		rw.Code = 401
+		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrfWithGoodCred)
+		httpReponse := rw.Result()
+		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.5", strings.NewReader("Try again"))
+
+		w.CountBasicAuthWithParameter += 1
+		return httpReponse, nil
+	case w.url.String() == "http://127.0.0.6":
+		rw := httptest.NewRecorder()
+		rw.Header().Set("Content-Type", "text/html")
+		rw.Code = 504
+		rw.Body = bytes.NewBuffer(bytesDocWithFormWithoutCsrfWithGoodCred)
+		httpReponse := rw.Result()
+		httpReponse.Request = httptest.NewRequest("GET", "http://127.0.0.5", strings.NewReader("Timeout"))
+
+		w.CountBasicAuthWithParameter += 1
+		return httpReponse, errors.New("timeout")
+	default:
+		w.CountBasicAuthWithParameter += 1
+		return nil, nil
+	}
+}
 func (w *fakeWebClient) GetDomain() (*url.URL) {return w.url}
-func (w *fakeWebClient) GetDomainHttpCode() (int) {return 200}
+func (w *fakeWebClient) GetDomainHttpCode() (int) {
+	return w.domainResponseCode
+}
 
 //UTIL
 func cleanSlice(potentialCredentials []domain.PotentialCredentials) []domain.PotentialCredentials {

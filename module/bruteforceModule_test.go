@@ -236,3 +236,63 @@ func TestNewBruteforceModuleWithNoMissingValue(t *testing.T) {
 		t.Errorf("Expected potential password to be admin, not " + wi.Form.PotentialCredentials[0].Password)
 	}
 }
+
+func TestNewBruteforceModuleWithNoMissingValueAndCode401ShouldReturnResponse(t *testing.T) {
+	t.Log("Call bruteforce with 401 found should start bruteforcing")
+
+	//given
+	ip := "127.0.0.5"
+	webClient := NewFakeWebClient(ip)
+	wi := data.NewWebInterface(webClient)
+
+	htmlTagsNames := data.NewHtmlSearchValues(CWD[:strings.LastIndex(CWD, "/")] + "/" + HTML_TAGS_NAMES_TEST)
+	credentials := data.NewCredentials(CWD[:strings.LastIndex(CWD, "/")] + "/" + DEFAULT_PASSWORD_TEST,
+		CWD[:strings.LastIndex(CWD, "/")] + "/" + LOGIN_TEST,
+		CWD[:strings.LastIndex(CWD, "/")] + "/" + PASSWORD_TEST)
+
+	res, _ := webClient.Scrap()
+	wi.Doc, _ = goquery.NewDocumentFromResponse(res)
+
+	// when
+	NewBruteforceModule(credentials, true, htmlTagsNames.LoginPatterns).Request(false, wi)
+
+	//then
+	if webClient.CountScrapWithParameter == 1 {
+		t.Errorf("Expected one call to webclient methods are condition is false")
+	}
+	if webClient.CountBasicAuthWithParameter == 2 {
+		t.Errorf("Expected one call to basic auth")
+	}
+	potentialCredentials := cleanSlice(wi.Form.PotentialCredentials)
+	if potentialCredentials[0].Username != "admin" {
+		t.Errorf("Expected potential username to be bug, not " + wi.Form.PotentialCredentials[0].Username)
+	}
+	if potentialCredentials[0].Password != "admin" {
+		t.Errorf("Expected potential password to be admin, not " + wi.Form.PotentialCredentials[0].Password)
+	}
+}
+
+func TestNewBruteforceModuleWithNoMissingValueAndCode401AndTimeoutShouldReturnError(t *testing.T) {
+	t.Log("Call bruteforce with 401 and return timeout should return error")
+
+	//given
+	ip := "127.0.0.6"
+	webClient := NewFakeWebClient(ip)
+	wi := data.NewWebInterface(webClient)
+
+	htmlTagsNames := data.NewHtmlSearchValues(CWD[:strings.LastIndex(CWD, "/")] + "/" + HTML_TAGS_NAMES_TEST)
+	credentials := data.NewCredentials(CWD[:strings.LastIndex(CWD, "/")] + "/" + DEFAULT_PASSWORD_TEST,
+		CWD[:strings.LastIndex(CWD, "/")] + "/" + LOGIN_TEST,
+		CWD[:strings.LastIndex(CWD, "/")] + "/" + PASSWORD_TEST)
+
+	res, _ := webClient.Scrap()
+	wi.Doc, _ = goquery.NewDocumentFromResponse(res)
+
+	// when
+	NewBruteforceModule(credentials, true, htmlTagsNames.LoginPatterns).Request(false, wi)
+
+	//then
+	if webClient.CountBasicAuthWithParameter == 1 {
+		t.Errorf("Expected one call to basic auth")
+	}
+}
