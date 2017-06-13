@@ -11,6 +11,16 @@ import (
 
 var HTTPCLIENT = http.DefaultClient
 
+func TestSimpleWebClientWithNonParsableIpShouldReturnError(t *testing.T) {
+	t.Log("Call NewSimpleWebClient with non-parsable should return error")
+
+	//given
+	domain := ""
+
+	// then
+	assert.Panics(t, func(){NewSimpleWebClient(domain, HTTPCLIENT)})
+}
+
 func TestSimpleWebClientWithoutHttpClientShouldReturnError(t *testing.T) {
 	t.Log("Call NewSimpleWebClient without http client should panic")
 
@@ -350,6 +360,33 @@ func TestNewScrapWithParameterWithValidMethodPostShouldReturnResponse(t *testing
 	assert.NotNil(t, res)
 }
 
+func TestNewScrapWithParameterWithValidMethodPostWithUrlUnreachableShouldReturnError(t *testing.T) {
+	t.Log("Call scrap with parameter with valid method post should return response")
+
+	//given
+	domain := "myurll.com"
+	path := "/"
+	method := "POST"
+	values := url.Values{}
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("POST", "http://myurll.com",
+		httpmock.NewErrorResponder(errors.New("connection refused")))
+
+	res, err := simpleWebClient.ScrapWithParameter(path, method, values)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.Nil(t, res)
+	assert.NotNil(t, err)
+}
+
 func TestNewScrapWithParameterWithNotValidMethodShouldReturnError(t *testing.T) {
 	t.Log("Call scrap with parameter with not valid method should return error")
 
@@ -394,6 +431,33 @@ func TestNewScrapWithNoParameterWithValidMethodGetShouldReturnResponse(t *testin
 	assert.NotNil(t, res)
 }
 
+func TestNewScrapWithParameterWithValidMethodGetWithUrlUnreachableShouldReturnError(t *testing.T) {
+	t.Log("Call scrap with parameter with valid method post should return response")
+
+	//given
+	domain := "myurll.com"
+	path := "/"
+	method := "GET"
+	values := url.Values{}
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "http://myurll.com",
+		httpmock.NewErrorResponder(errors.New("connection refused")))
+
+	res, err := simpleWebClient.ScrapWithParameter(path, method, values)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.Nil(t, res)
+	assert.NotNil(t, err)
+}
+
 func TestNewScrapWithNoParameterWithValidMethodPostShouldReturnResponse(t *testing.T) {
 	t.Log("Call scrap with no parameter with valid method post should return response")
 
@@ -419,6 +483,58 @@ func TestNewScrapWithNoParameterWithValidMethodPostShouldReturnResponse(t *testi
 	assert.NotNil(t, res)
 }
 
+func TestNewScrapWithNoParameterWithValidMethodPostWithUrlUnreachableShouldReturnError(t *testing.T) {
+	t.Log("Call scrap with no parameter with valid method post should return err")
+
+	//given
+	domain := "myurll.com"
+	path := "/"
+	method := "POST"
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("POST", "http://myurll.com",
+		httpmock.NewErrorResponder(errors.New("connection refused")))
+
+	res, err := simpleWebClient.ScrapWithNoParameter(path, method)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.NotNil(t, err)
+	assert.Nil(t, res)
+}
+
+func TestNewScrapWithNoParameterWithValidMethodGetWithUrlUnreachableShouldReturnError(t *testing.T) {
+	t.Log("Call scrap with no parameter with valid method get should return error")
+
+	//given
+	domain := "myurll.com"
+	path := "/"
+	method := "GET"
+	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
+
+	// when
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "http://myurll.com",
+		httpmock.NewErrorResponder(errors.New("connection refused")))
+
+	res, err := simpleWebClient.ScrapWithNoParameter(path, method)
+
+	httpmock.Deactivate()
+
+
+	// then
+	assert.NotNil(t, err)
+	assert.Nil(t, res)
+}
+
 func TestNewScrapWithNoParameterWithNotValidMethodShouldReturnError(t *testing.T) {
 	t.Log("Call scrap with no parameter with not valid method should return error")
 
@@ -426,11 +542,10 @@ func TestNewScrapWithNoParameterWithNotValidMethodShouldReturnError(t *testing.T
 	domain := "myurl.com"
 	path := "/"
 	method := "ZOP"
-	values := url.Values{}
 	simpleWebClient := NewSimpleWebClient(domain, HTTPCLIENT)
 
 	// when
-	res, err := simpleWebClient.ScrapWithParameter(path, method, values)
+	res, err := simpleWebClient.ScrapWithNoParameter(path, method)
 
 
 	// then

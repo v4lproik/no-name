@@ -7,6 +7,7 @@ import (
 	"net/http/cookiejar"
 	"strings"
 	"errors"
+	"log"
 )
 
 type simpleWebClient struct {
@@ -32,8 +33,8 @@ func NewSimpleWebClient(ip string, client *http.Client) (*simpleWebClient){
 	}
 
 	url, err := url.Parse(ip)
-	if err != nil {
-		panic(err)
+	if err != nil || ip == "http://" {
+		log.Panic("The <" + ip + "> can't be parsed.", err)
 	}
 
 	return &simpleWebClient{client, url, 0}
